@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Flex,
   Skeleton,
   Text,
@@ -180,14 +181,14 @@ function MenuOptionsStore({ data, categories, products, getAll, subdomain }) {
   // Renderizar skeletons durante o carregamento
   const renderSkeletons = () => {
     return (
-      <Flex width="100%" justifyContent="space-around">
+      <Flex width="100%" justifyContent="flex-start" gap="12px">
         {Array.from({ length: isMobile ? 3 : 5 }).map((_, i) => (
           <Skeleton
             key={i}
-            height="20px"
-            width={`${70 + Math.random() * 30}px`}
+            height="42px"
+            width="110px"
             startColor="gray.100"
-            endColor="gray.300"
+            endColor="gray.200"
             borderRadius="full"
           />
         ))}
@@ -196,74 +197,87 @@ function MenuOptionsStore({ data, categories, products, getAll, subdomain }) {
   };
 
   return (
-    <Box
-      id="ref"
-      w="100%"
-      bg={data?.primary_color}
-      h="75px"
-      display="flex"
-      padding={["12px 30px", "12px 50px"]}
-      pl={[0, "12px"]}
-      pr={[0, "12px"]}
-      alignItems="center"
-      justifyContent="center"
-      css={`
-        &.minimized {
-          position: fixed;
-          top: ${isMobile ? "66px" : "88px"};
-          z-index: 8;
-        }
-      `}
-    >
-      {isLoading ? (
-        renderSkeletons()
-      ) : (
-        <Box
-          ref={sliderElement}
-          className="keen-slider"
-          alignItems="center"
-          width="100%"
-          visibility={loaded ? "visible" : "hidden"}
-        >
-          {categoriesData.map(
-            (item, key) =>
-              (!productsData.length ||
-                productsData?.filter((entry) => filterGpProduct(entry, item))
-                  .length > 0) && (
-                <Box className="keen-slider__slide" key={key}>
-                  <Box
-                    _hover={{
-                      opacity: 0.8,
-                    }}
-                    textAlign="center"
-                    cursor="pointer"
-                  >
+    <Box className="page-center menu-card">
+      <Box
+        id="ref"
+        w="100%"
+        bg="white"
+        display="flex"
+        padding={["12px 16px", "16px 24px"]}
+        alignItems="center"
+        justifyContent="flex-start"
+        borderRadius="16px"
+        css={`
+          &.minimized {
+            position: fixed;
+            top: ${isMobile ? "16px" : "24px"};
+            left: 0;
+            right: 0;
+            z-index: 8;
+            padding: 12px 20px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+          }
+        `}
+      >
+        {isLoading ? (
+          renderSkeletons()
+        ) : (
+          <Box
+            ref={sliderElement}
+            className="keen-slider chips"
+            alignItems="center"
+            width="100%"
+            visibility={loaded ? "visible" : "hidden"}
+          >
+            {categoriesData.map(
+              (item, key) =>
+                (!productsData.length ||
+                  productsData?.filter((entry) => filterGpProduct(entry, item))
+                    .length > 0) && (
+                  <Box className="keen-slider__slide" key={key}>
                     <AnchorLink
-                      offset="300"
+                      offset="220"
                       href={"#" + slugify(item.descricao, { lower: true })}
                       onClick={() => setActive(item.id_grupo)}
                     >
-                      <Text
-                        color="white"
-                        fontSize={["12px", "15px"]}
-                        lineHeight={["14px", "auto"]}
+                      <Button
+                        className={`chip ${
+                          active == item.id_grupo ? "chip--active" : ""
+                        }`}
+                        borderRadius="999px"
+                        h="44px"
+                        px="20px"
+                        fontSize="14px"
                         fontWeight={600}
-                        borderTop={
-                          active == item.id_grupo ? "2px solid" : "0px"
+                        bg={
+                          active == item.id_grupo
+                            ? data?.primary_color || "#F59E0B"
+                            : "transparent"
                         }
-                        borderColor="#fff"
-                        pt="8px"
-                        pb="8px"
+                        color={active == item.id_grupo ? "white" : "#6B7280"}
+                        border="none"
+                        boxShadow="none"
+                        transition="all 0.2s ease"
+                        _hover={{
+                          bg:
+                            active == item.id_grupo
+                              ? data?.primary_color || "#F59E0B"
+                              : "#F8FAFC",
+                          color: active == item.id_grupo ? "white" : "#374151",
+                        }}
+                        _active={{
+                          transform: "scale(0.98)",
+                        }}
                       >
                         {item.descricao}
-                      </Text>
+                      </Button>
                     </AnchorLink>
                   </Box>
-                </Box>
-              )
-          )}
-        </Box>
-      )}
+                )
+            )}
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 }

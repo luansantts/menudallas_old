@@ -65,49 +65,47 @@ function ProductsList({ data, products, categories }) {
     }
   }, [products]);
 
-  console.debug("productsData", productsData);
-
   return (
-    <Box padding={["12px 30px", "12px 50px"]} pt="0" mb={["100px", "120px"]}>
+    <Box className="page-center" bg="white" pt="0" pb={["100px", "120px"]}>
       {categoriesData.map(
         (cat, keyCat) =>
           productsData?.filter((entry) => filterGpProduct(entry, cat)).length >
             0 && (
             <Box
-              mt={["30px", "58px"]}
+              mt={["24px", "32px"]}
               key={keyCat}
               id={slugify(cat.descricao, { lower: true })}
             >
               <Text
-                fontSize="20px"
-                fontWeight={600}
-                color={data?.primary_color}
-                mb={["20px", "27px"]}
+                fontSize={["18px", "20px"]}
+                fontWeight={700}
+                color="#1A1A1A"
+                mb={["12px", "16px"]}
               >
                 {cat.descricao}
               </Text>
 
-              <Flex
-                flexWrap="wrap"
-                gap={["10px", "20px"]}
-                justifyContent="space-between"
+              <Box
+                bg="white"
+                borderRadius="24px"
+                border="1px solid #ECECEC"
+                overflow="hidden"
               >
                 {productsData
                   ?.filter((entry) => filterGpProduct(entry, cat))
-                  ?.map((product, index) => (
+                  ?.map((product, index, arr) => (
                     <Flex
                       key={index}
                       cursor="pointer"
-                      transition="0.3s"
-                      _hover={{
-                        opacity: 0.8,
-                      }}
-                      w={["100%", "48.7%"]}
-                      mb={["0px", "0px"]}
-                      borderRadius="9px"
-                      border="1px solid #ECECEC"
-                      bg="#fff"
-                      overflow="hidden"
+                      transition="0.2s ease"
+                      w="100%"
+                      alignItems="center"
+                      py="18px"
+                      px={["14px", "20px"]}
+                      borderBottom={
+                        index !== arr.length - 1 ? "1px solid #F1F5F9" : "none"
+                      }
+                      _hover={{ bg: "rgba(249, 250, 251, 0.65)" }}
                       onClick={() =>
                         router.push(
                           `/produto/${slugify(product.descricao, {
@@ -116,22 +114,86 @@ function ProductsList({ data, products, categories }) {
                         )
                       }
                     >
+                      <Box flex="1" pr={["12px", "18px"]}>
+                        <Text
+                          fontSize={["15px", "16px"]}
+                          fontWeight={600}
+                          color="#1F2937"
+                          lineHeight="1.3"
+                        >
+                          {product.descricao}
+                        </Text>
+                        {product.detalhe && (
+                          <Text
+                            fontSize="13px"
+                            color="#6B7280"
+                            noOfLines={2}
+                            mt="6px"
+                          >
+                            {product.detalhe}
+                          </Text>
+                        )}
+
+                        <Flex alignItems="baseline" gap="10px" mt="12px">
+                          {product.tamanhos ? (
+                            <Text fontSize="sm" color="#6B7280">
+                              De{" "}
+                              <Text as="span" fontWeight={600} color="#111827">
+                                {moneyFormat.format(product.valor_de || 0)}
+                              </Text>{" "}
+                              até{" "}
+                              <Text as="span" fontWeight={600} color="#111827">
+                                {moneyFormat.format(product.valor_ate || 0)}
+                              </Text>
+                            </Text>
+                          ) : (
+                            <>
+                              {["P", "O"].indexOf(product.tipo) === -1 && (
+                                <Text
+                                  color="#111827"
+                                  fontWeight={700}
+                                  fontSize="lg"
+                                >
+                                  {product?.em_promocao == false
+                                    ? moneyFormat.format(product?.valor || 0)
+                                    : moneyFormat.format(
+                                        product?.valor_Promocao || 0
+                                      )}
+                                </Text>
+                              )}
+                              {["P", "O"].indexOf(product.tipo) === -1 &&
+                                product?.em_promocao == true && (
+                                  <Text
+                                    textDecoration="line-through"
+                                    color="#9CA3AF"
+                                    fontSize="sm"
+                                  >
+                                    {moneyFormat.format(product?.valor || 0)}
+                                  </Text>
+                                )}
+                            </>
+                          )}
+                        </Flex>
+                      </Box>
+
                       <Box
-                        display="flex"
-                        alignItems="stretch"
-                        borderRight={`2px solid ${data?.primary_color}`}
+                        w={["72px", "84px"]}
+                        h={["72px", "84px"]}
+                        borderRadius="18px"
+                        overflow="hidden"
+                        bg="#F8FAFC"
+                        flexShrink={0}
                       >
                         <Image
                           className="imgProdList"
                           src={product.foto_destaque}
-                          width={150}
-                          height={144}
+                          width={100}
+                          height={100}
                           objectFit="cover"
                           objectPosition="center"
                           style={{
-                            minWidth: 150,
-                            maxWidth: 150,
-                            maxHeight: 144,
+                            width: "100%",
+                            height: "100%",
                             objectFit: "cover",
                           }}
                           alt={product.descricao}
@@ -140,81 +202,9 @@ function ProductsList({ data, products, categories }) {
                           }}
                         />
                       </Box>
-
-                      <Box pt="17px" pb={["17px", "0"]} pl="24px" pr="24px">
-                        <Box>
-                          <Text fontSize="14px" fontWeight={600} color="#000">
-                            {product.descricao}
-                          </Text>
-                          <Text
-                            fontSize="12px"
-                            fontWeight={400}
-                            mb="2px"
-                            color="#979797"
-                          >
-                            {product.detalhe}
-                          </Text>
-                          {product?.serve_qtd_pessoas ? (
-                            <Text fontSize="xs" fontWeight={800} color="#000">
-                              Serve {product?.serve_qtd_pessoas} pessoa
-                              {product?.serve_qtd_pessoas > 1 ? "s" : ""}
-                            </Text>
-                          ) : (
-                            ""
-                          )}
-                        </Box>
-
-                        <Box mt="auto">
-                          <Text
-                            mt="12px"
-                            fontSize="14px"
-                            color="#000"
-                            fontWeight={400}
-                            display="flex"
-                            alignItems="center"
-                            gap="8px"
-                          >
-                            {product.tamanhos && <Text as="span">De: </Text>}
-
-                            {["P", "O"].indexOf(product.tipo) > -1 && (
-                              <Text
-                                as="span"
-                                color="rgb(80, 167, 115)"
-                                display="flex"
-                                alignItems="center"
-                                gap="4px"
-                              >
-                                {moneyFormat.format(product.valor_de || 0)}{" "}
-                                <Text color="rgb(113, 113, 113)">até: </Text>
-                                {moneyFormat.format(product.valor_ate || 0)}
-                              </Text>
-                            )}
-                            <Text as="span" color="rgb(80, 167, 115)">
-                              {["P", "O"].indexOf(product.tipo) === -1 &&
-                                (product?.em_promocao == false
-                                  ? moneyFormat.format(product?.valor || 0)
-                                  : moneyFormat.format(
-                                      product?.valor_Promocao || 0
-                                    ))}
-                            </Text>
-                            {["P", "O"].indexOf(product.tipo) === -1 &&
-                            product?.em_promocao == true ? (
-                              <Text
-                                textDecoration="line-through"
-                                color="rgb(113, 113, 113)"
-                              >
-                                {product?.em_promocao == true &&
-                                  moneyFormat.format(product?.valor || 0)}
-                              </Text>
-                            ) : (
-                              ""
-                            )}
-                          </Text>
-                        </Box>
-                      </Box>
                     </Flex>
                   ))}
-              </Flex>
+              </Box>
             </Box>
           )
       )}

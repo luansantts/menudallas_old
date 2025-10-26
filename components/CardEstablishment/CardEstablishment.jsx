@@ -10,9 +10,11 @@ function CardEstablishment({ item, key }) {
   return (
     <Flex
       key={key}
-      onClick={() =>
-        (window.location.href = `http://${item.nome_pagina}.${process.env.NEXT_PUBLIC_BASE_URL_DOMAIN}`)
-      }
+      onClick={() => {
+        const domain =
+          process.env.NEXT_PUBLIC_BASE_URL_DOMAIN || "localhost:3000";
+        window.location.href = `http://${item.nome_pagina}.${domain}`;
+      }}
       alignItems="center"
       backgroundColor="#fff"
       boxShadow="0px 4px 6px 8px rgba(0, 0, 0, 0.00)"
@@ -69,7 +71,7 @@ function CardEstablishment({ item, key }) {
 
           {item.distancia && (
             <Text fontSize="xs" fontWeight={400} color="primary">
-              {item.distancia }km
+              {item.distancia}km
             </Text>
           )}
         </Flex>

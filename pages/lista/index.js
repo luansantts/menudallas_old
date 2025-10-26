@@ -58,15 +58,20 @@ function lista({ data, subdomain }) {
         <>
           <Navbar
             isHome={false}
-            hasSearch={true}
+            hasSearch={false}
             setRefreshSearch={setRefreshSearch}
             data={data}
             subdomain={subdomain}
+            variant="storefront"
           />
 
           <Box id="header">
             <HeaderHomeStore data={data} />
-            <InfoStoreHome type={2} data={data} subdomain={subdomain} />
+            <InfoStoreHome
+              type={2}
+              data={data}
+              subdomain={subdomain}
+            />
             <MenuOptionsStore data={data} subdomain={subdomain} />
           </Box>
           <MainProducts
@@ -86,8 +91,34 @@ export async function getServerSideProps(context) {
   const host =
     context.req.headers["x-forwarded-host"] || context.req.headers.host;
   const subdomain = process.env.NEXT_PUBLIC_COMPANY_SUBDOMAIN;
+  const baseDomain = process.env.NEXT_PUBLIC_BASE_URL_NAME_BASE_DOMAIN;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-  if (subdomain != process.env.NEXT_PUBLIC_BASE_URL_NAME_BASE_DOMAIN) {
+  // Se as variáveis de ambiente não estão configuradas, retorna dados mockados para desenvolvimento
+  if (!subdomain || !baseDomain || !backendUrl) {
+    return {
+      props: {
+        data: {
+          nome: "Menu Dallas - Desenvolvimento",
+          frase_home: "Sistema de delivery em desenvolvimento",
+          primary_color: "#1e90ff",
+          logo_home: "/img/logo.png",
+          endereco: "Rua Exemplo",
+          numero: "123",
+          bairro: "Centro",
+          cidade: "São Paulo",
+          estado: "SP",
+          valor_minimo: 20.0,
+          frase_tempo_buscar: "30-45 min",
+          frase_tempo_delivery: "45-60 min",
+        },
+        subdomain: "dev",
+      },
+    };
+  }
+
+  if (subdomain != baseDomain) {
     try {
       const username = "testserver";
       const password = "testserver";
@@ -96,13 +127,10 @@ export async function getServerSideProps(context) {
         Authorization: `Basic ${btoa(username + ":" + password)}`,
       });
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}home/${subdomain}`,
-        {
-          method: "GET",
-          headers: headers,
-        }
-      );
+      const response = await fetch(`${backendUrl}home/${subdomain}`, {
+        method: "GET",
+        headers: headers,
+      });
       const rawData = await response.json();
 
       // Função para limpar valores undefined do objeto
@@ -141,7 +169,7 @@ export async function getServerSideProps(context) {
   } else {
     return {
       redirect: {
-        destination: process.env.NEXT_PUBLIC_BASE_URL,
+        destination: baseUrl || "/",
         permanent: false,
       },
     };

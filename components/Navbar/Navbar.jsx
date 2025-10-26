@@ -22,9 +22,10 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 import { BsFillChatDotsFill } from "react-icons/bs";
-import { FiMenu, FiSearch } from "react-icons/fi";
+import { FiArrowLeft, FiMenu, FiSearch } from "react-icons/fi";
 import { MdHome, MdPercent, MdPerson, MdShoppingBag } from "react-icons/md";
 import { FooterStore } from "../FooterStore";
 
@@ -34,8 +35,44 @@ function Navbar({
   setRefreshSearch,
   data,
   subdomain,
+  variant = "default",
 }) {
   const sidebar = useDisclosure();
+  const router = useRouter();
+
+  if (variant === "storefront") {
+    return (
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        w="100%"
+        px={["16px", "28px"]}
+        pt={["16px", "28px"]}
+        zIndex={10}
+      >
+        <Flex alignItems="center" justifyContent="space-between">
+          <IconButton
+            aria-label="Voltar"
+            icon={<FiArrowLeft />}
+            onClick={() => router.back()}
+            borderRadius="full"
+            bg="white"
+            color="gray.700"
+            boxShadow="0px 10px 30px rgba(15, 23, 42, 0.18)"
+            w="48px"
+            h="48px"
+            _hover={{ bg: "white", transform: "scale(0.98)" }}
+          />
+          <FooterStore
+            data={data}
+            subdomain={subdomain}
+            variant="floating"
+          />
+        </Flex>
+      </Box>
+    );
+  }
 
   return (
     <Box

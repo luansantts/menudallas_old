@@ -1,15 +1,45 @@
-import { Box, Icon, Text } from '@chakra-ui/react'
+import { Box, Flex, Icon, Text } from '@chakra-ui/react'
 import Link from 'next/link'
 import React from 'react'
-import { MdOutlineArrowBack, MdOutlineWest } from 'react-icons/md'
+import { FiShare2 } from 'react-icons/fi'
+import { MdOutlineWest } from 'react-icons/md'
 
 function NavbarProduct({ productData }) {
     return (
-        <Box position='fixed' top={0} padding={['20px 18px', '20px 18px']} w='100%' h='68px' display='flex' alignItems='center' borderBottom='1px solid #CECECE' bg='white' zIndex={999}>
-            <Link href='/lista'>
-                <Icon fontSize='24px' as={MdOutlineWest} fill='#000' mt='5px' />
-            </Link>
-            <Text ml='22px' fontSize={['16px', '18px']} color='#000' fontWeight={600} letterSpacing='0.5px'>{productData[0].descricao}</Text>
+        <Box position='fixed' top={0} left={0} w='100%' zIndex={999} pointerEvents='none'>
+            <Flex justifyContent='space-between' alignItems='center' padding={['20px 18px', '24px 32px']}>
+                <Link href='/lista' passHref legacyBehavior>
+                    <Box
+                        as='a'
+                        pointerEvents='auto'
+                        w={['44px', '52px']}
+                        h={['44px', '52px']}
+                        borderRadius='full'
+                        bg='white'
+                        display='flex'
+                        alignItems='center'
+                        justifyContent='center'
+                        boxShadow='0px 10px 25px rgba(0, 0, 0, 0.08)'
+                    >
+                        <Icon fontSize='22px' as={MdOutlineWest} color='#0D0D0D' />
+                    </Box>
+                </Link>
+
+                <Box
+                    pointerEvents='auto'
+                    w={['44px', '52px']}
+                    h={['44px', '52px']}
+                    borderRadius='full'
+                    bg='white'
+                    display='flex'
+                    alignItems='center'
+                    justifyContent='center'
+                    boxShadow='0px 10px 25px rgba(0, 0, 0, 0.08)'
+                >
+                    <Icon fontSize='20px' as={FiShare2} color='#0D0D0D' />
+                </Box>
+            </Flex>
+
         </Box>
     )
 }

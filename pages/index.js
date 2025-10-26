@@ -60,8 +60,20 @@ export async function getServerSideProps(context) {
   const host =
     context.req.headers["x-forwarded-host"] || context.req.headers.host;
   const subdomain = process.env.NEXT_PUBLIC_COMPANY_SUBDOMAIN;
+  const baseDomain = process.env.NEXT_PUBLIC_BASE_URL_NAME_BASE_DOMAIN;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
-  if (subdomain != process.env.NEXT_PUBLIC_BASE_URL_NAME_BASE_DOMAIN) {
+  // Se as variáveis de ambiente não estão configuradas, retorna props vazias para desenvolvimento
+  if (!subdomain || !baseDomain || !backendUrl) {
+    return {
+      props: {
+        data: {},
+        subdomain: "",
+      },
+    };
+  }
+
+  if (subdomain != baseDomain) {
     try {
       const username = "testserver";
       const password = "testserver";
@@ -70,13 +82,10 @@ export async function getServerSideProps(context) {
         Authorization: `Basic ${btoa(username + ":" + password)}`,
       });
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}home/${subdomain}`,
-        {
-          method: "GET",
-          headers: headers,
-        }
-      );
+      const response = await fetch(`${backendUrl}home/${subdomain}`, {
+        method: "GET",
+        headers: headers,
+      });
 
       const data = await response.json();
 

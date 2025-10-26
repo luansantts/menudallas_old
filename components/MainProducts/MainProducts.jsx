@@ -99,12 +99,12 @@ function MainProducts({
   }
 
   return (
-    <Box mt={["30px", "58px"]} padding={["12px 30px", "12px 50px"]} pt="0">
+    <Box mt={["24px", "48px"]} px={["16px", "48px"]} pt="0">
       <Text
-        fontSize="21px"
-        color={data?.primary_color}
-        fontWeight={600}
-        mb={["20px", "27px"]}
+        fontSize={["20px", "24px"]}
+        color="#1F2A37"
+        fontWeight={700}
+        mb={["16px", "24px"]}
       >
         {promoTitle}
       </Text>
@@ -113,15 +113,17 @@ function MainProducts({
         {productsData.map((product, key) => (
           <Box
             key={key}
-            borderRadius="9px"
+            borderRadius="24px"
             className="keen-slider__slide"
             cursor="pointer"
             transition="0.3s"
             _hover={{
-              opacity: 0.8,
+              transform: "translateY(-4px)",
             }}
-            border="1px solid #ECECEC"
             bg="#fff"
+            border="1px solid rgba(15, 23, 42, 0.05)"
+            boxShadow="0px 25px 45px rgba(15, 23, 42, 0.08)"
+            p="14px"
             onClick={() =>
               router.push(
                 `/produto/${slugify(product.descricao, { lower: true })}?g=${
@@ -130,14 +132,22 @@ function MainProducts({
               )
             }
           >
-            <Flex alignItems="center" justifyContent="center">
+            <Box
+              borderRadius="20px"
+              overflow="hidden"
+              h="170px"
+              mb="12px"
+              bg="#F4F6FB"
+            >
               <Image
                 className="mainImgProds"
                 src={product.foto_destaque}
                 width={234}
                 height={190}
                 style={{
-                  height: "190px",
+                  width: "100%",
+                  height: "170px",
+                  objectFit: "cover",
                 }}
                 objectFit="cover"
                 objectPosition="center"
@@ -146,60 +156,62 @@ function MainProducts({
                   return src;
                 }}
               />
-            </Flex>
-            <Divider
-              borderWidth="1px"
-              borderColor={data?.primary_color}
-              filter="drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.25))"
-            />
+            </Box>
 
-            <Box padding="14px" mt="5px">
-              <Text fontSize={["13px", "16px"]} color="#000" fontWeight={600}>
+            <Box>
+              <Text
+                fontSize={["15px", "17px"]}
+                color="#1F2A37"
+                fontWeight={600}
+                noOfLines={2}
+              >
                 {product.descricao}
               </Text>
-              <Text
-                mt="12px"
-                fontSize={["11px", "14px"]}
-                color="#000"
-                fontWeight={400}
-                display="flex"
-                alignItems="center"
-                gap="8px"
-              >
-                {product.tamanhos && <Text as="span">De: </Text>}
-
+              {product.detalhe && (
+                <Text
+                  mt="6px"
+                  fontSize="sm"
+                  color="#6B7280"
+                  noOfLines={2}
+                >
+                  {product.detalhe}
+                </Text>
+              )}
+              <Flex mt="14px" alignItems="baseline" gap="8px" flexWrap="wrap">
                 {["P", "O"].indexOf(product.tipo) > -1 && (
                   <Text
-                    as="span"
-                    color="rgb(80, 167, 115)"
-                    display="flex"
-                    alignItems="center"
-                    gap="4px"
+                    color="#10B981"
+                    fontWeight={600}
+                    fontSize="sm"
                   >
                     {moneyFormat.format(product.valor_de || 0)}{" "}
-                    <Text color="rgb(113, 113, 113)">até: </Text>
-                    {moneyFormat.format(product.valor_ate || 0)}
+                    <Text as="span" color="#9CA3AF" fontWeight={400}>
+                      até {moneyFormat.format(product.valor_ate || 0)}
+                    </Text>
                   </Text>
                 )}
-                <Text as="span" color="rgb(80, 167, 115)">
-                  {["P", "O"].indexOf(product.tipo) === -1 &&
-                    (product?.em_promocao == false
-                      ? moneyFormat.format(product?.valor || 0)
-                      : moneyFormat.format(product?.valor_promocao || 0))}
-                </Text>
-                {["P", "O"].indexOf(product.tipo) === -1 &&
-                product?.em_promocao == true ? (
+                {["P", "O"].indexOf(product.tipo) === -1 && (
                   <Text
-                    textDecoration="line-through"
-                    color="rgb(113, 113, 113)"
+                    color="#111827"
+                    fontWeight={700}
+                    fontSize="lg"
                   >
-                    {product?.em_promocao == true &&
-                      moneyFormat.format(product?.valor || 0)}
+                    {product?.em_promocao == false
+                      ? moneyFormat.format(product?.valor || 0)
+                      : moneyFormat.format(product?.valor_promocao || 0)}
                   </Text>
-                ) : (
-                  ""
                 )}
-              </Text>
+                {["P", "O"].indexOf(product.tipo) === -1 &&
+                  product?.em_promocao == true && (
+                    <Text
+                      textDecoration="line-through"
+                      color="#9CA3AF"
+                      fontSize="sm"
+                    >
+                      {moneyFormat.format(product?.valor || 0)}
+                    </Text>
+                  )}
+              </Flex>
             </Box>
           </Box>
         ))}

@@ -1,34 +1,31 @@
-import { Box } from "@chakra-ui/react";
-import Head from "next/head";
-import React from "react";
-import InfoStoreHome from "../InfoStoreHome/InfoStoreHome";
+import { Box } from '@chakra-ui/react';
+import React from 'react';
+import Navbar from '../Navbar/Navbar';
+import HeaderHomeStore from '../HeaderHomeStore/HeaderHomeStore';
+import InfoStoreHome from '../InfoStoreHome/InfoStoreHome';
+import Head from 'next/head';
 
 function HomeStore({ data, subdomain }) {
-  return (
-    <>
-      <Head>
-        <style>
-          {`
-            body {
-              background: #f5f7fb !important;
-            }
-          `}
-        </style>
-      </Head>
 
-      <Box
-        bg="#f5f7fb"
-        minH="100vh"
-        px={["18px", "32px"]}
-        py={["48px", "80px"]}
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <InfoStoreHome data={data} subdomain={subdomain} />
-      </Box>
-    </>
-  );
+    return (
+        <>
+            <Head>
+                <style>
+                    {`
+                        body {
+                            background: white !important;
+                        }
+                    `}
+                </style>
+            </Head>
+
+            <Box pt={["68px", "88px"]}>
+                <Navbar isHome={false} data={data} subdomain={subdomain} />
+                <HeaderHomeStore data={data} />
+                <InfoStoreHome data={data} subdomain={subdomain} />
+            </Box>
+        </>
+    )
 }
 
 export default HomeStore;
