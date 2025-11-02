@@ -1,39 +1,52 @@
-import { format, parse } from 'date-fns'
+import { addDays, setHours, setMinutes, format } from "date-fns";
+
+// Helper para construir um Date do "hoje" com HH:mm fornecido
+function buildTimeToday(timeHHmm) {
+  const [hh = "00", mm = "00"] = String(timeHHmm || "00:00").split(":");
+  let d = new Date();
+  d = setHours(d, Number(hh));
+  d = setMinutes(d, Number(mm));
+  return d;
+}
+
+function isDayEnabled(dayIndexString, dt) {
+  return (
+    (dayIndexString === "1" && dt.abre_segunda) ||
+    (dayIndexString === "2" && dt.abre_terca) ||
+    (dayIndexString === "3" && dt.abre_quarta) ||
+    (dayIndexString === "4" && dt.abre_quinta) ||
+    (dayIndexString === "5" && dt.abre_sexta) ||
+    (dayIndexString === "6" && dt.abre_sabado) ||
+    (dayIndexString === "7" && dt.abre_domingo)
+  );
+}
 
 export const getOpened = (dt) => {
-    if(dt.emPausa){
-        return false;
-    }
+  if (!dt) return false;
+  if (dt.emPausa) return false;
 
-    const day = format(new Date(), "i");
-    const now = new Date();
-    const openingTime = parse(dt.hora_abre, "HH:mm", new Date());
-    const closingTime = parse(dt.hora_fecha, "HH:mm", new Date());
-    const isOpenDuringNight = closingTime < openingTime;
-    const open = openingTime;
-    const close = closingTime;
+  const now = new Date();
+  const todayIndex = format(now, "i"); // 1 (seg) .. 7 (dom)
 
-    let isCurrentlyOpen;
-    if (isOpenDuringNight) {
-        isCurrentlyOpen =
-            (now >= open || now <= close) && now >= parse("00:00", "HH:mm", new Date()) && now <= parse("23:59", "HH:mm", new Date());
-    } else {
-        isCurrentlyOpen = now >= open && now <= close;
-    }
+  // Horários de hoje
+  const openToday = buildTimeToday(dt.hora_abre);
+  const closeToday = buildTimeToday(dt.hora_fecha);
 
-    const isTodayOpen = (
-        (day === "1" && dt.abre_segunda) ||
-        (day === "2" && dt.abre_terca) ||
-        (day === "3" && dt.abre_quarta) ||
-        (day === "4" && dt.abre_quinta) ||
-        (day === "5" && dt.abre_sexta) ||
-        (day === "6" && dt.abre_sabado) ||
-        (day === "7" && dt.abre_domingo)
-    );
+  const spansMidnight = closeToday <= openToday;
 
-    if (!isCurrentlyOpen && (now.getHours() < 8 || now.getHours() >= 22)) {
-        return false;
-    }
+  // Ajuste de janelas que viram a madrugada:
+  // - Se fecha no dia seguinte, move o close para +1 dia
+  // - Se agora está antes da hora de abrir e a janela vira, o open pertence a ontem
+  let open = openToday;
+  let close = spansMidnight ? addDays(closeToday, 1) : closeToday;
 
-    return isCurrentlyOpen && isTodayOpen;
+  if (spansMidnight && now < openToday) {
+    open = addDays(openToday, -1);
+  }
+
+  // O dia a considerar para a flag de abertura é o dia do "open" calculado
+  const openDayIndex = format(open, "i");
+  const dayEnabled = isDayEnabled(openDayIndex, dt);
+
+  return dayEnabled && now >= open && now <= close;
 };

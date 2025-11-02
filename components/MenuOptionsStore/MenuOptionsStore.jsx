@@ -7,7 +7,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useKeenSlider } from "keen-slider/react";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "keen-slider/keen-slider.min.css";
 import { connect } from "react-redux";
 import { categoriesActions } from "../../store/actions";
@@ -27,42 +27,18 @@ function MenuOptionsStore({ data, categories, products, getAll, subdomain }) {
   const [active, setActive] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const sliderRef = useRef(null);
   const initializedRef = useRef(false);
   const cacheKey = `${CACHE_KEY_PREFIX}${data?.user_id}`;
+  const scrollKey = `${cacheKey}_scroll`;
+  const chipsContainerRef = useRef(null);
 
   // Configuração do slider
   const options = {
-    initial: 0,
+    renderMode: "basic",
+    rubberband: false,
     slides: {
-      perView: 2,
-      spacing: 28,
-    },
-    breakpoints: {
-      "(max-width: 768px)": {
-        slides: {
-          perView: 3,
-          spacing: 2,
-        },
-      },
-      "(min-width: 769px) and (max-width: 1500px)": {
-        slides: {
-          perView: 5,
-          spacing: 28,
-        },
-      },
-      "(min-width: 1501px) and (max-width: 1920px)": {
-        slides: {
-          perView: 7,
-          spacing: 28,
-        },
-      },
-      "(min-width: 1921px) and (max-width: 3000px)": {
-        slides: {
-          perView: 10,
-          spacing: 28,
-        },
-      },
+      perView: "auto",
+      spacing: 8, // chips mais próximos
     },
     created() {
       setLoaded(true);
@@ -70,11 +46,14 @@ function MenuOptionsStore({ data, categories, products, getAll, subdomain }) {
   };
 
   // Inicializar o slider apenas quando os dados estiverem prontos
-  const [sliderElement, keenSlider] = useKeenSlider(options, [
-    (slider) => {
-      sliderRef.current = slider;
+  const [sliderElement, keenSlider] = useKeenSlider(options);
+  const attachSliderRef = useCallback(
+    (node) => {
+      chipsContainerRef.current = node || null;
+      sliderElement(node);
     },
-  ]);
+    [sliderElement]
+  );
 
   // Tenta carregar os dados do cache primeiro
   useEffect(() => {
@@ -106,31 +85,6 @@ function MenuOptionsStore({ data, categories, products, getAll, subdomain }) {
       initializedRef.current = true;
       getAll(data.user_id);
     }
-
-    // Configurar evento de scroll
-    const handleScroll = () => {
-      let header_height = document.getElementById("header")?.clientHeight || 0;
-      let header_ref = document.getElementById("ref")?.offsetTop || 0;
-      let yOffset = document.documentElement.scrollTop + 60;
-
-      const header = document.getElementById("header");
-      const ref = document.getElementById("ref");
-
-      if (header && yOffset >= header_height) {
-        header.classList.add("minimized");
-      } else if (header) {
-        header.classList.remove("minimized");
-      }
-
-      if (ref && yOffset >= header_ref) {
-        ref.classList.add("minimized");
-      } else if (ref) {
-        ref.classList.remove("minimized");
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, [data.user_id, getAll, cacheKey]);
 
   // Processar dados de categorias do Redux e atualizar cache
@@ -171,12 +125,31 @@ function MenuOptionsStore({ data, categories, products, getAll, subdomain }) {
 
   // Atualizar o slider quando os dados estiverem prontos
   useEffect(() => {
-    if (loaded && sliderRef.current && categoriesData.length > 0) {
-      setTimeout(() => {
-        sliderRef.current.update();
-      }, 50);
+    if (loaded && keenSlider && keenSlider.current) {
+      keenSlider.current.update();
     }
-  }, [loaded, categoriesData]);
+  }, [loaded, categoriesData, keenSlider]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const node = chipsContainerRef.current;
+    if (!node) return;
+
+    const stored = sessionStorage.getItem(scrollKey);
+    if (stored) {
+      node.scrollLeft = Number(stored);
+    }
+
+    const handleScroll = () =>
+      sessionStorage.setItem(scrollKey, node.scrollLeft.toString());
+
+    node.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      node.removeEventListener("scroll", handleScroll);
+      sessionStorage.setItem(scrollKey, node.scrollLeft.toString());
+    };
+  }, [scrollKey, loaded]);
 
   // Renderizar skeletons durante o carregamento
   const renderSkeletons = () => {
@@ -197,86 +170,78 @@ function MenuOptionsStore({ data, categories, products, getAll, subdomain }) {
   };
 
   return (
-    <Box className="page-center menu-card">
-      <Box
-        id="ref"
-        w="100%"
-        bg="white"
-        display="flex"
-        padding={["12px 16px", "16px 24px"]}
-        alignItems="center"
-        justifyContent="flex-start"
-        borderRadius="16px"
-        css={`
-          &.minimized {
-            position: fixed;
-            top: ${isMobile ? "16px" : "24px"};
-            left: 0;
-            right: 0;
-            z-index: 8;
-            padding: 12px 20px;
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
-          }
-        `}
-      >
-        {isLoading ? (
-          renderSkeletons()
-        ) : (
-          <Box
-            ref={sliderElement}
-            className="keen-slider chips"
-            alignItems="center"
-            width="100%"
-            visibility={loaded ? "visible" : "hidden"}
-          >
-            {categoriesData.map(
-              (item, key) =>
-                (!productsData.length ||
-                  productsData?.filter((entry) => filterGpProduct(entry, item))
-                    .length > 0) && (
-                  <Box className="keen-slider__slide" key={key}>
-                    <AnchorLink
-                      offset="220"
-                      href={"#" + slugify(item.descricao, { lower: true })}
-                      onClick={() => setActive(item.id_grupo)}
-                    >
-                      <Button
-                        className={`chip ${
-                          active == item.id_grupo ? "chip--active" : ""
-                        }`}
-                        borderRadius="999px"
-                        h="44px"
-                        px="20px"
-                        fontSize="14px"
-                        fontWeight={600}
-                        bg={
-                          active == item.id_grupo
-                            ? data?.primary_color || "#F59E0B"
-                            : "transparent"
-                        }
-                        color={active == item.id_grupo ? "white" : "#6B7280"}
-                        border="none"
-                        boxShadow="none"
-                        transition="all 0.2s ease"
-                        _hover={{
-                          bg:
-                            active == item.id_grupo
-                              ? data?.primary_color || "#F59E0B"
-                              : "#F8FAFC",
-                          color: active == item.id_grupo ? "white" : "#374151",
-                        }}
-                        _active={{
-                          transform: "scale(0.98)",
-                        }}
+    <Box className="page-center">
+      <Box className="menu-card">
+        <Box
+          id="ref"
+          w="100%"
+          bg="transparent"
+          display="flex"
+          padding={0}
+          alignItems="center"
+          justifyContent="flex-start"
+          borderRadius={0}
+          css={`
+            position: static !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+
+            &.minimized {
+              position: static !important;
+              top: auto !important;
+              left: auto !important;
+              right: auto !important;
+              padding: 0 !important;
+              box-shadow: none !important;
+            }
+          `}
+        >
+          {isLoading ? (
+            renderSkeletons()
+          ) : (
+            <Box
+              ref={attachSliderRef}
+              className="keen-slider chips"
+              alignItems="center"
+              width="100%"
+              visibility={loaded ? "visible" : "hidden"}
+            >
+              {categoriesData.map(
+                (item, key) =>
+                  (!productsData.length ||
+                    productsData?.filter((entry) =>
+                      filterGpProduct(entry, item)
+                    ).length > 0) && (
+                    <Box className="keen-slider__slide" key={key}>
+                      <AnchorLink
+                        offset="220"
+                        href={"#" + slugify(item.descricao, { lower: true })}
+                        onClick={() => setActive(item.id_grupo)}
                       >
-                        {item.descricao}
-                      </Button>
-                    </AnchorLink>
-                  </Box>
-                )
-            )}
-          </Box>
-        )}
+                        <Button
+                          className={`menu-chip chip ${
+                            active == item.id_grupo ? "chip--active" : ""
+                          }`}
+                          size="sm"
+                          h="28px"
+                          px="3"
+                          rounded="full"
+                          fontSize="xs"
+                          fontWeight="500"
+                          variant="outline"
+                          borderColor="gray.200"
+                          _hover={{ bg: "gray.50" }}
+                        >
+                          {item.descricao}
+                        </Button>
+                      </AnchorLink>
+                    </Box>
+                  )
+              )}
+            </Box>
+          )}
+        </Box>
       </Box>
     </Box>
   );

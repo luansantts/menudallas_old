@@ -13,6 +13,7 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
+  HStack,
   Icon,
   Input,
   Radio,
@@ -21,10 +22,12 @@ import {
   Tag,
   Text,
   Textarea,
+  VStack,
   Divider,
   UnorderedList,
   ListItem,
   useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -33,15 +36,17 @@ import { moneyFormat } from "../../utils/moneyFormat";
 import { connect } from "react-redux";
 import { saboresActions } from "../../store/actions";
 import { Loading } from "../Loading";
-import { FiCheck, FiSearch } from "react-icons/fi";
+import { FiCheck, FiSearch, FiInfo } from "react-icons/fi";
 import { BsPlusLg } from "react-icons/bs";
 import { GrSubtract } from "react-icons/gr";
 import { MdClose } from "react-icons/md";
 import { FooterProduct } from "../FooterProduct";
 import { addCart } from "../../utils/addCart";
 import { useRouter } from "next/router";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import Image from "next/image";
+import styles from "./InfoProduct.module.css";
+import CartModal from "../CartModal/CartModal";
 
 function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
   const toast = useToast();
@@ -64,7 +69,53 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
   const [isLoading, setIsLoading] = useState(false);
   const [searchFlavors, setSearchFlavors] = useState(false);
   const [searchTermFlavor, setSearchTermFlavor] = useState("");
+  const {
+    isOpen: isCartOpen,
+    onOpen: onCartOpen,
+    onClose: onCartClose,
+  } = useDisclosure();
+  const [cartItems, setCartItems] = useState([]);
+  const [cartTotal, setCartTotal] = useState(0);
   const router = useRouter();
+
+  useEffect(() => {
+    // Add page-product class to body for styling isolation
+    document.body.classList.add("page-product");
+
+    // Cleanup function to remove class when component unmounts
+    return () => {
+      document.body.classList.remove("page-product");
+    };
+  }, []);
+
+  // Load cart items from localStorage
+  useEffect(() => {
+    const loadCart = () => {
+      const bag = localStorage.getItem("@menu-digital:" + subdomain + ":bag");
+      if (bag) {
+        const items = JSON.parse(bag);
+        setCartItems(items);
+        // Calculate total
+        const total = items.reduce((sum, item) => sum + item.valor_total, 0);
+        setCartTotal(total);
+      }
+    };
+
+    loadCart();
+    // Reload cart periodically to keep it updated
+    const interval = setInterval(loadCart, 1000);
+    return () => clearInterval(interval);
+  }, [subdomain]);
+
+  // Listen for openCart event from NavbarProduct
+  useEffect(() => {
+    const handleOpenCart = () => {
+      onCartOpen();
+    };
+
+    window.addEventListener("openCart", handleOpenCart);
+    return () => window.removeEventListener("openCart", handleOpenCart);
+  }, [onCartOpen]);
 
   useEffect(() => {
     if (!isEmpty(productData)) {
@@ -156,7 +207,6 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
       });
     }
 
-
     if (gpAdicionais.length > 0) {
       let adc = [];
 
@@ -244,10 +294,18 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
       text: "Deseja realmente adicionar este item ao carrinho?",
       icon: "question",
       showCancelButton: true,
-      confirmButtonColor: data?.primary_color || "#3085d6",
-      cancelButtonColor: "#d33",
       confirmButtonText: "Sim, adicionar",
       cancelButtonText: "Cancelar",
+      buttonsStyling: false,
+      customClass: {
+        popup: "md-popup",
+        title: "md-title",
+        htmlContainer: "md-body",
+        actions: "md-actions",
+        confirmButton: "md-btn md-btn--confirm",
+        cancelButton: "md-btn md-btn--cancel",
+        icon: "md-icon",
+      },
     }).then((result) => {
       if (result.isConfirmed) {
         let product = {
@@ -301,7 +359,18 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
         }
 
         addCart(product, subdomain);
-        router.push("/lista");
+        // Recarregar o carrinho do localStorage
+        const bag = localStorage.getItem("@menu-digital:" + subdomain + ":bag");
+        if (bag) {
+          const items = JSON.parse(bag);
+          setCartItems(items);
+          const total = items.reduce((sum, item) => sum + item.valor_total, 0);
+          setCartTotal(total);
+        }
+        // Abrir a sacola após adicionar
+        setTimeout(() => {
+          onCartOpen();
+        }, 300);
       }
     });
   };
@@ -438,485 +507,534 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
   const hasPromotion = !isRangeProduct && dt?.em_promocao == true;
 
   return (
-    <>
-      <Box bg="#F5F5F5" minH="100vh" pb={["220px", "200px"]}>
+    <Box
+      as="main"
+      bg="gray.50"
+      minH="100vh"
+      position="relative"
+      id="product-page"
+    >
+      {/* HERO IMAGE - 40-45% da tela */}
+      <Box
+        position="relative"
+        w="100%"
+        h={{ base: "45vh", md: "50vh" }}
+        overflow="hidden"
+        bg="#F5F5F5"
+        borderBottomRadius="2xl"
+      >
+        {/* Background Image */}
+        <Image
+          src={dt?.foto_destaque || "/placeholder.png"}
+          alt={dt?.descricao || "Produto"}
+          fill
+          style={{ objectFit: "cover", objectPosition: "center" }}
+          sizes="100vw"
+          priority
+          loader={({ src }) => src}
+        />
+
+        {/* Gradient Overlay - Sutil no topo para legibilidade dos botões */}
         <Box
-          bgGradient="linear(to-b, #FFFFFF 15%, #F5F5F5 100%)"
-          pt={["140px", "160px"]}
-          pb={["60px", "100px"]}
-        >
-          <Container maxW="4xl" px={["20px", "32px"]}>
-            <Box display="flex" justifyContent="center">
-              <Box
-                bg="white"
-                borderRadius="40px"
-                w="100%"
-                maxW="560px"
-                p={["24px", "32px"]}
-                boxShadow="0px 35px 90px rgba(15, 23, 42, 0.15)"
-              >
-                <Image
-                  className="imgViewProduct"
-                  src={dt?.foto_destaque}
-                  width={560}
-                  height={420}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    objectFit: "contain",
-                  }}
-                  alt={dt?.descricao}
-                  loader={({ src }) => src}
-                />
-              </Box>
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          bgGradient="linear(to-b, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 60%, rgba(255,255,255,0.8) 100%)"
+          zIndex={1}
+        />
+      </Box>
+
+      {/* MAIN CARD - Painel branco com cantos arredondados no topo */}
+      <Box
+        bg="white"
+        borderTopRadius="2xl"
+        mt="-6"
+        p={6}
+        position="relative"
+        zIndex={5}
+        boxShadow="sm"
+        maxW={{ base: "100%", md: "600px" }}
+        mx={{ base: 0, md: "auto" }}
+        px={4}
+        pb={4}
+      >
+        {/* Store Info Header */}
+        <Flex align="center" gap={3} mb={2}>
+          <Image
+            src={
+              data?.logo_home ||
+              "https://imgmenudallas.s3.sa-east-1.amazonaws.com/noimage.png"
+            }
+            alt={data?.nome || "Logo da loja"}
+            width={24}
+            height={24}
+            style={{ borderRadius: "4px", objectFit: "cover" }}
+            loader={({ src }) => src}
+          />
+          <Text color="gray.500" fontSize="sm">
+            {data?.nome || "Estabelecimento"}
+          </Text>
+        </Flex>
+
+        {/* Product Title */}
+        <Text fontWeight="bold" fontSize="xl" color="#212121" mb={2}>
+          {dt?.descricao}
+        </Text>
+
+        {/* Price Row */}
+        <Flex justify="space-between" align="center" my={4}>
+          <Text fontWeight="bold" fontSize="lg" color="#212121">
+            {moneyFormat.format(totalUnity || 0)}
+          </Text>
+
+          {/* Quantity Stepper */}
+          <Flex align="center" gap={2}>
+            <Box
+              w="36px"
+              h="36px"
+              borderRadius="12px"
+              border="1px solid #E5E7EB"
+              bg="white"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              cursor="pointer"
+              onClick={handleDecreaseCount}
+              aria-label="diminuir"
+            >
+              <Icon as={GrSubtract} fontSize="18px" color="#6B7280" />
             </Box>
-          </Container>
+            <Text fontWeight={600} fontSize="lg" minW="24px" textAlign="center">
+              {count}
+            </Text>
+            <Box
+              w="36px"
+              h="36px"
+              borderRadius="12px"
+              bg="#f59e0b"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              cursor="pointer"
+              onClick={handleIncreaseCount}
+              aria-label="aumentar"
+            >
+              <Icon as={BsPlusLg} fontSize="18px" color="white" />
+            </Box>
+          </Flex>
+        </Flex>
+
+        {/* About Section */}
+        <Box mt={4} mb={5}>
+          <Text fontWeight="bold" fontSize="md" color="#212121" mb={2}>
+            Sobre
+          </Text>
+          <Text fontSize="sm" color="gray.600" lineHeight="1.5">
+            {dt?.detalhe ||
+              "Esse produto está pronto para deixar o seu pedido ainda mais especial."}
+          </Text>
         </Box>
 
-        <Container maxW="4xl" px={["20px", "32px"]} mt={["-100px", "-150px"]}>
-          <Box
-            bg="white"
-            borderRadius="40px"
-            boxShadow="0px 45px 90px rgba(15, 23, 42, 0.18)"
-            p={["30px", "48px"]}
-          >
-            <Stack spacing={10}>
-              <Box>
-                <Flex alignItems="center" gap="3">
-                  <Box
-                    w="56px"
-                    h="56px"
-                    borderRadius="full"
-                    overflow="hidden"
-                    bg="#FFF4E0"
-                    border="1px solid #FFE7BF"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    {data?.logo_home ? (
-                      <Image
-                        src={data?.logo_home}
-                        alt={data?.nome}
-                        width={56}
-                        height={56}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        loader={({ src }) => src}
-                      />
-                    ) : (
-                      <Text fontWeight={700} color={data?.primary_color || "#F59E0B"}>
-                        {data?.nome?.[0]?.toUpperCase() || "S"}
-                      </Text>
-                    )}
-                  </Box>
-                  <Box>
-                    <Text fontSize="sm" color="#9CA3AF">
-                      {data?.nome || "Estabelecimento"}
-                    </Text>
-                    <Text fontSize="lg" fontWeight={700} color="#111827">
-                      {dt?.descricao}
-                    </Text>
-                  </Box>
-                </Flex>
+        {/* Ingredientes Section */}
+        {ingredientsList.length > 0 && (
+          <Box mt={5} mb={6}>
+            <Flex align="center" gap={2} mb={2}>
+              <Icon as={FiInfo} fontSize="16px" color="#212121" />
+              <Text fontWeight="bold" fontSize="md" color="#212121">
+                Ingredientes
+              </Text>
+            </Flex>
+            <UnorderedList spacing={1} mt={2} color="gray.600" fontSize="sm">
+              {ingredientsList.map((item, index) => (
+                <ListItem key={`${item}-${index}`}>{item}</ListItem>
+              ))}
+            </UnorderedList>
+          </Box>
+        )}
 
-                {dt.tag && (
-                  <Tag
-                    mt="4"
-                    bg={data?.primary_color || "#F59E0B"}
-                    color="white"
-                    borderRadius="full"
-                    px="14px"
-                    py="4px"
-                    fontWeight={600}
-                  >
-                    {dt.tag}
-                  </Tag>
-                )}
-
-                {dt?.detalhe && (
-                  <Text mt="6" color="#4B5563" lineHeight="1.7">
-                    {dt?.detalhe}
-                  </Text>
-                )}
-
-                <Flex
-                  mt="6"
-                  alignItems={["flex-start", "center"]}
-                  justifyContent="space-between"
-                  flexDirection={["column", "row"]}
-                  gap="24px"
+        {/* Additional Content - Sem cards coloridos */}
+        <Box
+          className="additional-content"
+          bg="transparent"
+          shadow="none"
+          border="none"
+          p={0}
+          m={0}
+        >
+          <Stack spacing={10}>
+            <Box>
+              {dt.tag && (
+                <Tag
+                  mb="4"
+                  bg={data?.primary_color || "#F59E0B"}
+                  color="white"
+                  borderRadius="full"
+                  px="14px"
+                  py="4px"
+                  fontWeight={600}
                 >
-                  <Box>
-                    <Text
-                      fontSize="xs"
-                      textTransform="uppercase"
-                      letterSpacing="0.25em"
-                      color="#9CA3AF"
-                      fontWeight={700}
-                    >
-                      Preço
+                  {dt.tag}
+                </Tag>
+              )}
+
+              {isRangeProduct && (
+                <Text fontSize="sm" color="#6B7280" mb="2">
+                  De {moneyFormat.format(dt?.valor_de || 0)} até{" "}
+                  {moneyFormat.format(dt?.valor_ate || 0)}
+                </Text>
+              )}
+              {hasPromotion && (
+                <Text
+                  fontSize="sm"
+                  color="#9CA3AF"
+                  textDecoration="line-through"
+                  mb="2"
+                >
+                  {moneyFormat.format(dt?.valor || 0)}
+                </Text>
+              )}
+              {/* Total removido da página de produto */}
+              {/* {count > 1 && (
+                <Text fontSize="sm" color="#6B7280" mb="2">
+                  Total: {moneyFormat.format(total || 0)}
+                </Text>
+              )} */}
+            </Box>
+
+            {(dt.tag || isRangeProduct || hasPromotion || count > 1) && (
+              <Divider />
+            )}
+
+            {gpTamanhos.length > 0 && (
+              <Box
+                bg="transparent"
+                border="none"
+                borderRadius="0"
+                overflow="visible"
+                mt={4}
+              >
+                <Flex
+                  flexWrap={["wrap", "nowrap"]}
+                  w="100%"
+                  p={0}
+                  alignItems="center"
+                  justifyContent="space-between"
+                  bg="transparent"
+                  borderBottom="none"
+                  mb={3}
+                >
+                  <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
+                    <Text fontSize="lg" fontWeight={700}>
+                      Escolha o tamanho
                     </Text>
-                    <Text fontSize={["36px", "48px"]} fontWeight={700} color="#111827">
-                      {moneyFormat.format(totalUnity || 0)}
+                    <Text fontSize="sm" color="#6B7280">
+                      Escolha no mínimo 1 opção
                     </Text>
-                    {isRangeProduct && (
-                      <Text fontSize="sm" color="#6B7280">
-                        De {moneyFormat.format(dt?.valor_de || 0)} até {moneyFormat.format(dt?.valor_ate || 0)}
-                      </Text>
-                    )}
-                    {hasPromotion && (
-                      <Text fontSize="sm" color="#9CA3AF" textDecoration="line-through">
-                        {moneyFormat.format(dt?.valor || 0)}
-                      </Text>
-                    )}
-                    {count > 1 && (
-                      <Text fontSize="sm" color="#6B7280">
-                        Total: {moneyFormat.format(total || 0)}
-                      </Text>
-                    )}
                   </Box>
 
                   <Flex
-                    alignItems="center"
-                    borderRadius="full"
-                    border="1px solid #E5E7EB"
-                    bg="#F9FAFB"
-                    padding="10px 20px"
-                    gap="18px"
+                    w={["100%", "auto"]}
+                    justifyContent={["center", "flex-end"]}
+                    mt={["16px", "0"]}
+                    gap="12px"
                   >
-                    <Button
-                      onClick={handleDecreaseCount}
-                      variant="ghost"
-                      w="42px"
-                      h="42px"
-                      borderRadius="full"
-                      bg="white"
-                      boxShadow="0px 15px 25px rgba(15, 23, 42, 0.12)"
-                    >
-                      <Icon as={GrSubtract} />
-                    </Button>
-                    <Text fontSize="20px" fontWeight={700} color="#111827">
-                      {count}
-                    </Text>
-                    <Button
-                      onClick={handleIncreaseCount}
-                      variant="ghost"
-                      w="42px"
-                      h="42px"
-                      borderRadius="full"
+                    <Box
                       bg={data?.primary_color || "#F59E0B"}
-                      color="white"
-                      boxShadow="0px 15px 25px rgba(245, 158, 11, 0.4)"
-                      _hover={{ opacity: 0.85 }}
+                      borderRadius="full"
+                      padding="10px 22px"
+                      fontSize="14px"
+                      fontWeight={700}
+                      color="#fff"
                     >
-                      <Icon as={BsPlusLg} />
-                    </Button>
+                      {!isEmpty(lengthObject) ? 1 : 0} / 1
+                    </Box>
+
+                    <Box
+                      bg="#4B5563"
+                      borderRadius="full"
+                      padding="10px 22px"
+                      fontSize="12px"
+                      fontWeight={700}
+                      color="#FFF"
+                    >
+                      Obrigatório
+                    </Box>
                   </Flex>
                 </Flex>
-              </Box>
 
-              <Divider />
-
-              <Box>
-                <Text fontSize="lg" fontWeight={700} color="#111827">
-                  Sobre
-                </Text>
-                <Text mt="3" color="#4B5563" lineHeight="1.7">
-                  {dt?.detalhe ||
-                    "Esse produto está pronto para deixar o seu pedido ainda mais especial."}
-                </Text>
-
-                {ingredientsList.length > 0 && (
-                  <Box mt="8">
-                    <Text fontSize="lg" fontWeight={700} color="#111827">
-                      Ingredientes
-                    </Text>
-                    <UnorderedList mt="3" spacing="2" color="#4B5563" pl="20px">
-                      {ingredientsList.map((item, index) => (
-                        <ListItem key={`${item}-${index}`}>{item}</ListItem>
-                      ))}
-                    </UnorderedList>
-                  </Box>
-                )}
-              </Box>
-
-              {gpTamanhos.length > 0 && (
-                <Box
-                  borderRadius="32px"
-                  border="1px solid #E5E7EB"
-                  bg="#FDFDFD"
-                  overflow="hidden"
-                >
+                {gpTamanhos.map((tam, index) => (
                   <Flex
-                    flexWrap={["wrap", "nowrap"]}
+                    key={index}
                     w="100%"
-                    p={["20px", "28px"]}
+                    borderBottom={
+                      index + 1 === gpTamanhos.length
+                        ? "none"
+                        : "1px solid #E5E7EB"
+                    }
+                    padding={0}
+                    py={3}
                     alignItems="center"
                     justifyContent="space-between"
-                    bg="#FFFFFF"
-                    borderBottom="1px solid #EEF2F7"
+                    flexWrap="wrap"
                   >
-                    <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
-                      <Text fontSize="lg" fontWeight={700}>
-                        Escolha o tamanho
+                    <Box>
+                      <Text fontSize="md" fontWeight={700}>
+                        {tam?.tamanho}
                       </Text>
                       <Text fontSize="sm" color="#6B7280">
-                        Escolha no mínimo 1 opção
+                        Até {tam?.qtd_sabor} sabores
                       </Text>
                     </Box>
 
-                    <Flex
-                      w={["100%", "auto"]}
-                      justifyContent={["center", "flex-end"]}
-                      mt={["16px", "0"]}
-                      gap="12px"
-                    >
-                      <Box
-                        bg={data?.primary_color || "#F59E0B"}
-                        borderRadius="full"
-                        padding="10px 22px"
-                        fontSize="14px"
-                        fontWeight={700}
-                        color="#fff"
-                      >
-                        {!isEmpty(lengthObject) ? 1 : 0} / 1
-                      </Box>
-
-                      <Box
-                        bg="#FFE8E8"
-                        borderRadius="full"
-                        padding="10px 22px"
-                        fontSize="12px"
-                        fontWeight={700}
-                        color="#FF1D1D"
-                      >
-                        Obrigatório
-                      </Box>
-                    </Flex>
+                    <Box mt={["12px", "0"]}>
+                      <Checkbox
+                        isChecked={length == index}
+                        onChange={() => {
+                          if (tam.tamanho !== lengthObject.tamanho) {
+                            setFlavorsSelected([]);
+                            handleLength(tam?.tamanho);
+                          }
+                          setLength(index);
+                          setLengthObject(tam);
+                          setOpenModal(true);
+                        }}
+                        size="lg"
+                        sx={{
+                          ".chakra-checkbox__control": {
+                            w: "20px",
+                            h: "20px",
+                            borderRadius: "6px",
+                            borderWidth: "2px",
+                            borderColor:
+                              length == index
+                                ? data?.primary_color || "#CF3F2E"
+                                : "gray.300",
+                            bg:
+                              length == index
+                                ? data?.primary_color || "#CF3F2E"
+                                : "white",
+                            transition: "all .15s ease",
+                            boxShadow:
+                              length == index
+                                ? "0 2px 6px rgba(207, 63, 46, .25)"
+                                : "none",
+                          },
+                        }}
+                      />
+                    </Box>
                   </Flex>
+                ))}
 
-                  {gpTamanhos.map((tam, index) => (
-                    <Flex
-                      key={index}
-                      w="100%"
-                      borderBottom={
-                        index + 1 === gpTamanhos.length ? "none" : "1px solid #EEF2F7"
-                      }
-                      padding={["20px", "28px"]}
+                <Drawer
+                  placement="bottom"
+                  onClose={() => setOpenModal(false)}
+                  isOpen={openModal}
+                >
+                  <DrawerOverlay />
+                  <DrawerContent borderRadius="32px 32px 0 0" maxH="85vh">
+                    <DrawerHeader
+                      position="relative"
+                      borderBottomWidth="1px"
+                      textAlign="center"
+                      display="flex"
                       alignItems="center"
                       justifyContent="space-between"
-                      flexWrap="wrap"
                     >
-                      <Box>
-                        <Text fontSize="md" fontWeight={700}>
-                          {tam?.tamanho}
-                        </Text>
-                        <Text fontSize="sm" color="#6B7280">
-                          Até {tam?.qtd_sabor} sabores
-                        </Text>
-                      </Box>
-
-                      <Box mt={["12px", "0"]}>
-                        <Switch
-                          isChecked={length == index}
-                          onChange={() => {
-                            if (tam.tamanho !== lengthObject.tamanho) {
-                              setFlavorsSelected([]);
-                              handleLength(tam?.tamanho);
-                            }
-                            setLength(index);
-                            setLengthObject(tam);
-                            setOpenModal(true);
-                          }}
-                          size={["md", "lg"]}
-                          css={{
-                            ".chakra-switch__track[data-checked]": {
-                              "--switch-bg": data?.primary_color,
-                            },
-                          }}
+                      <Box display={searchFlavors ? "block" : "none"} w="80%">
+                        <Input
+                          name="name"
+                          type="search"
+                          value={searchTermFlavor}
+                          float="left"
+                          fontSize="sm"
+                          onChange={(e) => handleFilterProducts(e)}
+                          onKeyPress={(e) => handleFilterProducts(e)}
+                          placeholder="Digite para filtrar por um sabor"
                         />
                       </Box>
-                    </Flex>
-                  ))}
 
-                  <Drawer
-                    placement="bottom"
-                    onClose={() => setOpenModal(false)}
-                    isOpen={openModal}
-                  >
-                    <DrawerOverlay />
-                    <DrawerContent borderRadius="32px 32px 0 0">
-                      <DrawerHeader
-                        position="relative"
-                        borderBottomWidth="1px"
-                        textAlign="center"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="space-between"
+                      {!searchFlavors && (
+                        <Text color={data?.primary_color}>Sabores</Text>
+                      )}
+
+                      <Button
+                        onClick={() => {
+                          setFlavorsFilters(flavors);
+                          setSearchTermFlavor("");
+                          setSearchFlavors(!searchFlavors);
+                        }}
+                        variant="transparent"
                       >
-                        <Box display={searchFlavors ? "block" : "none"} w="80%">
-                          <Input
-                            name="name"
-                            type="search"
-                            value={searchTermFlavor}
-                            float="left"
-                            fontSize="sm"
-                            onChange={(e) => handleFilterProducts(e)}
-                            onKeyPress={(e) => handleFilterProducts(e)}
-                            placeholder="Digite para filtrar por um sabor"
-                          />
-                        </Box>
+                        <Icon as={FiSearch} />
+                      </Button>
+                    </DrawerHeader>
+                    <DrawerBody overflowY="auto">
+                      {!searchFlavors && (
+                        <>
+                          <Flex
+                            flexWrap={["wrap", "initial"]}
+                            w="100%"
+                            p="25px"
+                          >
+                            <Box
+                              textAlign={["center", "initial"]}
+                              w={["100%", "60%"]}
+                            >
+                              <Text
+                                fontSize="16px"
+                                fontWeight={600}
+                                textTransform="uppercase"
+                              >
+                                Sabores disponíveis para esse tamanho
+                              </Text>
+                              <Text fontSize="14px" fontWeight={400}>
+                                Escolha no mínimo 1 opção
+                              </Text>
+                            </Box>
 
-                        {!searchFlavors && (
-                          <Text color={data?.primary_color}>Sabores</Text>
-                        )}
-
-                        <Button
-                          onClick={() => {
-                            setFlavorsFilters(flavors);
-                            setSearchTermFlavor("");
-                            setSearchFlavors(!searchFlavors);
-                          }}
-                          variant="transparent"
-                        >
-                          <Icon as={FiSearch} />
-                        </Button>
-                      </DrawerHeader>
-                      <DrawerBody>
-                        {!searchFlavors && (
-                          <>
-                            <Flex flexWrap={["wrap", "initial"]} w="100%" p="25px">
-                              <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
-                                <Text fontSize="16px" fontWeight={600} textTransform="uppercase">
-                                  Sabores disponíveis para esse tamanho
-                                </Text>
-                                <Text fontSize="14px" fontWeight={400}>
-                                  Escolha no mínimo 1 opção
-                                </Text>
+                            <Flex
+                              w={["40%", "40%"]}
+                              justifyContent={["center", "initial"]}
+                              w={["100%", "initial"]}
+                              mt={["15px", ""]}
+                            >
+                              <Box
+                                bg={data?.primary_color}
+                                borderRadius="5px"
+                                padding="10px 18px"
+                                fontSize={["14px", "16px"]}
+                                fontWeight={600}
+                                color="#fff"
+                              >
+                                {flavorsSelected.length} /{" "}
+                                {lengthObject.qtd_sabor}
                               </Box>
 
-                              <Flex
-                                w={["40%", "40%"]}
-                                justifyContent={["center", "initial"]}
-                                w={["100%", "initial"]}
-                                mt={["15px", ""]}
-                              >
-                                <Box
-                                  bg={data?.primary_color}
-                                  borderRadius="5px"
-                                  padding="10px 18px"
-                                  fontSize={["14px", "16px"]}
-                                  fontWeight={600}
-                                  color="#fff"
-                                >
-                                  {flavorsSelected.length} / {lengthObject.qtd_sabor}
-                                </Box>
-
-                                <Box
-                                  ml="16px"
-                                  bg="#FFE8E8"
-                                  borderRadius="5px"
-                                  padding="12px 20px"
-                                  fontSize={["12px", "14px"]}
-                                  fontWeight={600}
-                                  color="#FF1D1D"
-                                >
-                                  Obrigatório
-                                </Box>
-                              </Flex>
-                            </Flex>
-
-                            <Box p="0px 25px" overflowY="auto" maxH="650px">
                               <Box
-                                border="1px solid #CECECE"
+                                ml="16px"
+                                bg="#4B5563"
+                                borderRadius="5px"
+                                padding="12px 20px"
+                                fontSize={["12px", "14px"]}
+                                fontWeight={600}
+                                color="#FFF"
+                              >
+                                Obrigatório
+                              </Box>
+                            </Flex>
+                          </Flex>
+
+                          <Box p="0px 25px" overflowY="auto" maxH="650px">
+                            <Box
+                              border="1px solid #CECECE"
+                              borderRadius="22px 22px 0px 0px"
+                            >
+                              <Box
+                                bg="#DDD"
+                                w="100%"
+                                p="25px"
+                                alignItems="center"
+                                justifyContent="space-between"
                                 borderRadius="22px 22px 0px 0px"
                               >
                                 <Box
-                                  bg="#DDD"
-                                  w="100%"
-                                  p="25px"
-                                  alignItems="center"
-                                  justifyContent="space-between"
-                                  borderRadius="22px 22px 0px 0px"
+                                  textAlign={["center", "initial"]}
+                                  w={["100%", "60%"]}
                                 >
-                                  <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
-                                    <Text fontSize="16px" fontWeight={600} textTransform="uppercase">
-                                      Faça sua escolha de sabores
-                                    </Text>
-                                    <Text fontSize="14px" fontWeight={400}>
-                                      Escolha até {lengthObject.qtd_sabor} opç
-                                      {lengthObject.qtd_sabor > 1 ? "ões" : "ão"}
-                                    </Text>
-                                  </Box>
-
-                                  <Flex
-                                    w={["40%", "40%"]}
-                                    justifyContent={["center", "initial"]}
-                                    w={["100%", "initial"]}
-                                    mt={["15px", ""]}
+                                  <Text
+                                    fontSize="16px"
+                                    fontWeight={600}
+                                    textTransform="uppercase"
                                   >
-                                    <Box
-                                      bg={data?.primary_color}
-                                      borderRadius="5px"
-                                      padding="10px 18px"
-                                      fontSize={["14px", "16px"]}
-                                      fontWeight={600}
-                                      color="#fff"
-                                    >
-                                      {flavorsSelected.length} / {lengthObject.qtd_sabor}
-                                    </Box>
-                                  </Flex>
+                                    Faça sua escolha de sabores
+                                  </Text>
+                                  <Text fontSize="14px" fontWeight={400}>
+                                    Escolha até {lengthObject.qtd_sabor} opç
+                                    {lengthObject.qtd_sabor > 1 ? "ões" : "ão"}
+                                  </Text>
                                 </Box>
 
-                                <Box className="saboresList">
-                                  {flavorsFilters.map((sab, index) => (
-                                    <Box
-                                      borderBottom={
-                                        flavorsFilters.length === index + 1
-                                          ? ""
-                                          : "1px solid #CECECE"
-                                      }
-                                    >
+                                <Flex
+                                  w={["40%", "40%"]}
+                                  justifyContent={["center", "initial"]}
+                                  w={["100%", "initial"]}
+                                  mt={["15px", ""]}
+                                >
+                                  <Box
+                                    bg={data?.primary_color}
+                                    borderRadius="5px"
+                                    padding="10px 18px"
+                                    fontSize={["14px", "16px"]}
+                                    fontWeight={600}
+                                    color="#fff"
+                                  >
+                                    {flavorsSelected.length} /{" "}
+                                    {lengthObject.qtd_sabor}
+                                  </Box>
+                                </Flex>
+                              </Box>
+
+                              <VStack spacing="10px" p="0 25px 25px" w="100%">
+                                {flavorsFilters.map((sab, index) => {
+                                  const isSelected =
+                                    flavorsSelected.filter(
+                                      (filter) =>
+                                        filter.id_sabor == sab.id_sabor
+                                    ).length > 0;
+
+                                  return (
+                                    <Box key={index} w="100%">
                                       <Flex
-                                        justifyContent="space-between"
                                         alignItems="center"
-                                        key={index}
-                                        p="10px"
-                                        pl={0}
-                                        pr={0}
+                                        justifyContent="space-between"
+                                        gap="12px"
+                                        h="48px"
+                                        px="16px"
+                                        border="1px solid"
+                                        borderColor="gray.200"
+                                        borderRadius="12px"
+                                        bg="white"
+                                        _hover={{
+                                          borderColor: "gray.300",
+                                          bg: "gray.50",
+                                        }}
                                       >
-                                        <Text fontSize="13px" fontWeight={600}>
-                                          {sab?.descricao}
-                                        </Text>
-                                        <Flex alignItems="center" gap="20px">
-                                          <Text as="strong" fontSize="14px">
+                                        <Box>
+                                          <Text
+                                            fontWeight={700}
+                                            color="gray.900"
+                                            fontSize="15px"
+                                            lineHeight="20px"
+                                          >
+                                            {sab?.descricao}
+                                          </Text>
+                                        </Box>
+
+                                        <Flex align="center" gap="12px">
+                                          <Text
+                                            fontWeight={700}
+                                            color="gray.800"
+                                            fontSize="15px"
+                                          >
                                             {moneyFormat.format(sab?.valor)}
                                           </Text>
                                           <Checkbox
-                                            size="lg"
-                                            color={
-                                              data.primary_color != undefined
-                                                ? data.primary_color
-                                                : "#1e90ff"
-                                            }
-                                            isChecked={
-                                              flavorsSelected.filter(
-                                                (filter) =>
-                                                  filter.id_sabor == sab.id_sabor
-                                              ).length > 0
-                                                ? true
-                                                : false
-                                            }
+                                            isChecked={isSelected}
                                             onChange={(e) => {
                                               let dt = flavorsSelected;
-                                              if (lengthObject.qtd_sabor === 0) {
+                                              if (
+                                                lengthObject.qtd_sabor === 0
+                                              ) {
                                                 if (
                                                   flavorsSelected.find(
                                                     (filter) => filter === sab
                                                   ) !== undefined
                                                 ) {
                                                   if (
-                                                    sab.descricao !== dt.descricao
+                                                    sab.descricao !==
+                                                    dt.descricao
                                                   ) {
                                                     let ind = dt.indexOf(sab);
                                                     dt.splice(ind, 1);
@@ -963,16 +1081,33 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
 
                                               setFlavorsSelected([...dt]);
                                             }}
-                                          ></Checkbox>
+                                            sx={{
+                                              ".chakra-checkbox__control": {
+                                                w: "20px",
+                                                h: "20px",
+                                                borderRadius: "6px",
+                                                borderWidth: "2px",
+                                                borderColor: isSelected
+                                                  ? data?.primary_color ||
+                                                    "#CF3F2E"
+                                                  : "gray.300",
+                                                bg: isSelected
+                                                  ? data?.primary_color ||
+                                                    "#CF3F2E"
+                                                  : "white",
+                                                transition: "all .15s ease",
+                                                boxShadow: isSelected
+                                                  ? "0 2px 6px rgba(207, 63, 46, .25)"
+                                                  : "none",
+                                              },
+                                            }}
+                                          />
                                         </Flex>
                                       </Flex>
 
-                                      {flavorsSelected.filter(
-                                        (filter) =>
-                                          filter.id_sabor == sab.id_sabor
-                                      ).length > 0 && (
+                                      {isSelected && (
                                         <Textarea
-                                          mb={5}
+                                          mt="8px"
                                           placeholder="Escreva a observação aqui..."
                                           size={["xs", "xs"]}
                                           border="1px solid #E0E0E0"
@@ -985,17 +1120,25 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                                             )?.observacao
                                           }
                                           onChange={(e) => {
-                                            setFlavorsSelected((prevFlavors) => {
-                                              return prevFlavors.map((flavor) => {
-                                                if (flavor.id_sabor === sab.id_sabor) {
-                                                  return {
-                                                    ...flavor,
-                                                    observacao: e.target.value,
-                                                  };
-                                                }
-                                                return flavor;
-                                              });
-                                            });
+                                            setFlavorsSelected(
+                                              (prevFlavors) => {
+                                                return prevFlavors.map(
+                                                  (flavor) => {
+                                                    if (
+                                                      flavor.id_sabor ===
+                                                      sab.id_sabor
+                                                    ) {
+                                                      return {
+                                                        ...flavor,
+                                                        observacao:
+                                                          e.target.value,
+                                                      };
+                                                    }
+                                                    return flavor;
+                                                  }
+                                                );
+                                              }
+                                            );
                                           }}
                                           resize="none"
                                           _focusVisible={{
@@ -1008,317 +1151,211 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                                         />
                                       )}
                                     </Box>
-                                  ))}
-                                </Box>
-                              </Box>
+                                  );
+                                })}
+                              </VStack>
                             </Box>
-                          </>
-                        )}
-                      </DrawerBody>
-                      <DrawerFooter>
-                        <Button
-                          variant="transparent"
-                          color="white"
-                          bg={data?.primary_color}
-                          transition="0.3s"
-                          _hover={{
-                            opacity: 0.8,
-                          }}
-                          w="100%"
-                          onClick={() => {
-                            setOpenModal(false);
-                            window.scrollTo(0, 0);
-                          }}
-                        >
-                          Salvar
-                        </Button>
-                      </DrawerFooter>
-                    </DrawerContent>
-                  </Drawer>
-                </Box>
-              )}
-
-              {flavorsSelected && flavorsSelected.length ? (
-                <Box
-                  borderRadius="32px"
-                  border="1px solid #E5E7EB"
-                  bg="#FFFFFF"
-                  overflow="hidden"
-                >
-                  <Flex
-                    flexWrap={["wrap", "initial"]}
-                    w="100%"
-                    p={["20px", "28px"]}
-                    alignItems="center"
-                    justifyContent="space-between"
-                    bg="#FDFDFD"
-                  >
-                    <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
-                      <Text fontSize="lg" fontWeight={700}>
-                        Sabores escolhidos
-                      </Text>
-                    </Box>
-
-                    <Flex
-                      w={["100%", "auto"]}
-                      justifyContent={["center", "flex-end"]}
-                      mt={["16px", "0"]}
-                    >
-                      <Box
-                        bg={data?.primary_color || "#F59E0B"}
-                        borderRadius="full"
-                        padding="10px 22px"
-                        fontSize="14px"
-                        fontWeight={700}
-                        color="#fff"
-                      >
-                        {flavorsSelected.length} / {lengthObject.qtd_sabor}
-                      </Box>
-                    </Flex>
-                  </Flex>
-
-                  {flavorsSelected?.map((sab, index) => (
-                    <Box
-                      key={index}
-                      w="100%"
-                      borderTop="1px solid #EEF2F7"
-                      padding={["18px", "24px"]}
-                    >
-                      <Flex alignItems="center" justifyContent="space-between" flexWrap="wrap">
-                        <Box>
-                          <Text fontSize="md" fontWeight={700}>
-                            {sab?.descricao}
-                          </Text>
-                        </Box>
-
-                        <Box mt={["12px", "0"]}>
-                          <Switch
-                            isChecked
-                            onChange={() => {
-                              if (
-                                dt.descricao &&
-                                !dt.descricao.includes(sab.descricao)
-                              ) {
-                                const newFlavorsSelected = flavorsSelected.filter(
-                                  (entry) => entry.id_sabor != sab.id_sabor
-                                );
-                                setFlavorsSelected(newFlavorsSelected);
-                              }
-                            }}
-                            size={["md", "lg"]}
-                            css={{
-                              ".chakra-switch__track[data-checked]": {
-                                "--switch-bg": data?.primary_color,
-                              },
-                            }}
-                          />
-                        </Box>
-                      </Flex>
-
-                      {sab?.observacao && (
-                        <Text fontSize="sm" mt="8px" color="#6B7280">
-                          Observação: {sab?.observacao}
-                        </Text>
-                      )}
-                    </Box>
-                  ))}
-                </Box>
-              ) : (
-                ""
-              )}
-
-              {productDetail.length > 0 && (
-                <Box
-                  borderRadius="32px"
-                  border="1px solid #E5E7EB"
-                  bg="#FFFFFF"
-                  overflow="hidden"
-                >
-                  <Flex
-                    flexWrap={["wrap", "initial"]}
-                    w="100%"
-                    p={["20px", "28px"]}
-                    alignItems="center"
-                    justifyContent="space-between"
-                    bg="#FDFDFD"
-                  >
-                    <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
-                      <Text fontSize="lg" fontWeight={700}>
-                        Ingredientes extras e adicionais
-                      </Text>
-                      <Text fontSize="sm" color="#6B7280">
-                        Escolha no mínimo {" "}
-                        {productDetail.length > 0 &&
-                          Object.values(productDetail[0])[0][0]?.qtd_minimo}
-                        {" "} opções
-                      </Text>
-                    </Box>
-
-                    <Flex
-                      w={["100%", "auto"]}
-                      justifyContent={["center", "flex-end"]}
-                      mt={["16px", "0"]}
-                    >
-                      <Box
-                        bg={data?.primary_color || "#F59E0B"}
-                        borderRadius="full"
-                        padding="10px 22px"
-                        fontSize="14px"
-                        fontWeight={700}
-                        color="#fff"
-                      >
-                        {productDetail.length > 0
-                          ? Object.values(productDetail[0])[0][0]?.selected_index.length
-                          : 0}
-                        /
-                        {productDetail.length > 0 &&
-                          Object.values(productDetail[0])[0][0]?.qtd_maximo}
-                      </Box>
-                    </Flex>
-                  </Flex>
-
-                  {productDetail.map((detail, index) => {
-                    var detailTwo = detail[Object.keys(detail)[0]];
-
-                    return detailTwo.map((item, itemIndex) => (
-                      <Box key={itemIndex} borderTop="1px solid #EEF2F7">
-                        <Flex
-                          flexWrap={["wrap", "initial"]}
-                          w="100%"
-                          p={["20px", "28px"]}
-                          alignItems="center"
-                          justifyContent="space-between"
-                          bg="#FFFFFF"
-                        >
-                          <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
-                            <Text fontSize="md" fontWeight={700}>
-                              {item?.descricao}
-                            </Text>
-                            <Text fontSize="sm" color="#6B7280">
-                              Escolha no mínimo {item?.qtd_minimo} opç
-                              {item.qtd_minimo > 1 ? "ões" : "ão"}
-                            </Text>
                           </Box>
+                        </>
+                      )}
+                    </DrawerBody>
+                    <DrawerFooter>
+                      <Button
+                        variant="transparent"
+                        color="white"
+                        bg={data?.primary_color}
+                        transition="0.3s"
+                        _hover={{
+                          opacity: 0.8,
+                        }}
+                        w="100%"
+                        onClick={() => {
+                          setOpenModal(false);
+                          window.scrollTo(0, 0);
+                        }}
+                      >
+                        Salvar
+                      </Button>
+                    </DrawerFooter>
+                  </DrawerContent>
+                </Drawer>
+              </Box>
+            )}
 
-                          <Flex
-                            w={["100%", "auto"]}
-                            justifyContent={["center", "flex-end"]}
-                            mt={["16px", "0"]}
-                            gap="12px"
-                          >
-                            <Box
-                              bg={data?.primary_color || "#F59E0B"}
-                              borderRadius="full"
-                              padding="10px 22px"
-                              fontSize="14px"
-                              fontWeight={700}
-                              color="#fff"
-                            >
-                              {item.selected_index.length} / {item.qtd_maximo}
-                            </Box>
+            {flavorsSelected && flavorsSelected.length ? (
+              <Box
+                borderRadius="32px"
+                border="1px solid #E5E7EB"
+                bg="#FFFFFF"
+                overflow="hidden"
+              >
+                <Flex
+                  flexWrap={["wrap", "initial"]}
+                  w="100%"
+                  p={["20px", "28px"]}
+                  alignItems="center"
+                  justifyContent="space-between"
+                  bg="#FDFDFD"
+                >
+                  <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
+                    <Text fontSize="lg" fontWeight={700}>
+                      Sabores escolhidos
+                    </Text>
+                  </Box>
 
-                            {item.obrigatorio === "N" ? (
-                              <Box
-                                bg="#E7F8E7"
-                                borderRadius="full"
-                                padding="10px 22px"
-                                fontSize="12px"
-                                fontWeight={700}
-                                color="#50A773"
-                              >
-                                Opcional
-                              </Box>
-                            ) : (
-                              <Box
-                                bg="#FFE8E8"
-                                borderRadius="full"
-                                padding="10px 22px"
-                                fontSize="12px"
-                                fontWeight={700}
-                                color="#FF1D1D"
-                              >
-                                Obrigatório
-                              </Box>
-                            )}
-                          </Flex>
-                        </Flex>
-
-                        {item.adicionais.map((add, addIndex) => (
-                          <Flex
-                            key={add.id}
-                            w="100%"
-                            borderTop="1px solid #F3F4F6"
-                            padding={["18px", "24px"]}
-                            alignItems="center"
-                            justifyContent="space-between"
-                            flexWrap="wrap"
-                          >
-                            <Box>
-                              <Text fontSize="md" fontWeight={600}>
-                                {add.descricao}
-                              </Text>
-                              <Text fontSize="sm" color="#6B7280">
-                                {moneyFormat.format(add.valor)}
-                              </Text>
-                            </Box>
-                            <Box mt={["12px", "0"]}>
-                              <Switch
-                                isChecked={item.selected_index.includes(add)}
-                                onChange={(e) => {
-                                  if (
-                                    item.selected_index.length >= item.qtd_maximo &&
-                                    e.target.checked &&
-                                    item.qtd_maximo > 0
-                                  ) {
-                                    toast({
-                                      title: "Aviso",
-                                      description: `Selecione até ${item.qtd_maximo} opções`,
-                                      status: "warning",
-                                      duration: 2000,
-                                      isClosable: true,
-                                      position: "bottom-center",
-                                    });
-                                  } else {
-                                    handleSwitchChange(itemIndex, addIndex);
-                                  }
-                                }}
-                                size={["md", "lg"]}
-                                css={{
-                                  ".chakra-switch__track[data-checked]": {
-                                    "--switch-bg": data?.primary_color,
-                                  },
-                                }}
-                              />
-                            </Box>
-                          </Flex>
-                        ))}
-                      </Box>
-                    ));
-                  })}
-                </Box>
-              )}
-
-              {gpAdicionais.length > 0 && (
-                <Stack spacing={6}>
-                  {gpAdicionais.map((item, itemIndex) => (
+                  <Flex
+                    w={["100%", "auto"]}
+                    justifyContent={["center", "flex-end"]}
+                    mt={["16px", "0"]}
+                  >
                     <Box
-                      key={itemIndex}
-                      borderRadius="32px"
-                      border="1px solid #E5E7EB"
-                      bg="#FFFFFF"
-                      overflow="hidden"
+                      bg={data?.primary_color || "#F59E0B"}
+                      borderRadius="full"
+                      padding="10px 22px"
+                      fontSize="14px"
+                      fontWeight={700}
+                      color="#fff"
                     >
+                      {flavorsSelected.length} / {lengthObject.qtd_sabor}
+                    </Box>
+                  </Flex>
+                </Flex>
+
+                {flavorsSelected?.map((sab, index) => (
+                  <Box
+                    key={index}
+                    w="100%"
+                    borderTop="1px solid #EEF2F7"
+                    padding={["18px", "24px"]}
+                  >
+                    <Flex
+                      alignItems="center"
+                      justifyContent="space-between"
+                      flexWrap="wrap"
+                    >
+                      <Box>
+                        <Text fontSize="md" fontWeight={700}>
+                          {sab?.descricao}
+                        </Text>
+                      </Box>
+
+                      <Box mt={["12px", "0"]}>
+                        <Checkbox
+                          isChecked
+                          onChange={() => {
+                            if (
+                              dt.descricao &&
+                              !dt.descricao.includes(sab.descricao)
+                            ) {
+                              const newFlavorsSelected = flavorsSelected.filter(
+                                (entry) => entry.id_sabor != sab.id_sabor
+                              );
+                              setFlavorsSelected(newFlavorsSelected);
+                            }
+                          }}
+                          size="lg"
+                          sx={{
+                            ".chakra-checkbox__control": {
+                              w: "20px",
+                              h: "20px",
+                              borderRadius: "6px",
+                              borderWidth: "2px",
+                              borderColor: data?.primary_color || "#CF3F2E",
+                              bg: data?.primary_color || "#CF3F2E",
+                              transition: "all .15s ease",
+                              boxShadow: "0 2px 6px rgba(207, 63, 46, .25)",
+                            },
+                          }}
+                        />
+                      </Box>
+                    </Flex>
+
+                    {sab?.observacao && (
+                      <Text fontSize="sm" mt="8px" color="#6B7280">
+                        Observação: {sab?.observacao}
+                      </Text>
+                    )}
+                  </Box>
+                ))}
+              </Box>
+            ) : (
+              ""
+            )}
+
+            {productDetail.length > 0 && (
+              <Box
+                borderRadius="32px"
+                border="1px solid #E5E7EB"
+                bg="#FFFFFF"
+                overflow="hidden"
+              >
+                <Flex
+                  flexWrap={["wrap", "initial"]}
+                  w="100%"
+                  p={["20px", "28px"]}
+                  alignItems="center"
+                  justifyContent="space-between"
+                  bg="#FDFDFD"
+                >
+                  <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
+                    <Text fontSize="lg" fontWeight={700}>
+                      Ingredientes extras e adicionais
+                    </Text>
+                    <Text fontSize="sm" color="#6B7280">
+                      Escolha no mínimo{" "}
+                      {productDetail.length > 0 &&
+                        Object.values(productDetail[0])[0][0]?.qtd_minimo}{" "}
+                      opções
+                    </Text>
+                  </Box>
+
+                  <Flex
+                    w={["100%", "auto"]}
+                    justifyContent={["center", "flex-end"]}
+                    mt={["16px", "0"]}
+                  >
+                    <Box
+                      bg={data?.primary_color || "#F59E0B"}
+                      borderRadius="full"
+                      padding="10px 22px"
+                      fontSize="14px"
+                      fontWeight={700}
+                      color="#fff"
+                    >
+                      {productDetail.length > 0
+                        ? Object.values(productDetail[0])[0][0]?.selected_index
+                            .length
+                        : 0}
+                      /
+                      {productDetail.length > 0 &&
+                        Object.values(productDetail[0])[0][0]?.qtd_maximo}
+                    </Box>
+                  </Flex>
+                </Flex>
+
+                {productDetail.map((detail, index) => {
+                  var detailTwo = detail[Object.keys(detail)[0]];
+
+                  return detailTwo.map((item, itemIndex) => (
+                    <Box key={itemIndex} borderTop="1px solid #EEF2F7">
                       <Flex
                         flexWrap={["wrap", "initial"]}
                         w="100%"
                         p={["20px", "28px"]}
                         alignItems="center"
                         justifyContent="space-between"
-                        bg="#FDFDFD"
+                        bg="#FFFFFF"
                       >
-                        <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
+                        <Box
+                          textAlign={["center", "initial"]}
+                          w={["100%", "60%"]}
+                        >
                           <Text fontSize="md" fontWeight={700}>
-                            {item.descricao}
+                            {item?.descricao}
+                          </Text>
+                          <Text fontSize="sm" color="#6B7280">
+                            Escolha no mínimo {item?.qtd_minimo} opç
+                            {item.qtd_minimo > 1 ? "ões" : "ão"}
                           </Text>
                         </Box>
 
@@ -1352,12 +1389,12 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                             </Box>
                           ) : (
                             <Box
-                              bg="#FFE8E8"
+                              bg="#4B5563"
                               borderRadius="full"
                               padding="10px 22px"
                               fontSize="12px"
                               fontWeight={700}
-                              color="#FF1D1D"
+                              color="#FFF"
                             >
                               Obrigatório
                             </Box>
@@ -1369,27 +1406,33 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                         <Flex
                           key={add.id}
                           w="100%"
-                          borderTop="1px solid #F3F4F6"
-                          padding={["18px", "24px"]}
+                          px={0}
+                          py={3}
                           alignItems="center"
                           justifyContent="space-between"
                           flexWrap="wrap"
+                          borderTop={
+                            addIndex === 0 ? "none" : "1px solid #E5E7EB"
+                          }
                         >
-                          <Box>
+                          <Box textAlign="left">
                             <Text fontSize="md" fontWeight={600}>
                               {add.descricao}
                             </Text>
-                            <Text fontSize="sm" color="#6B7280">
+                          </Box>
+
+                          <HStack spacing="12px" align="center">
+                            <Text fontSize="md" fontWeight={600}>
                               {moneyFormat.format(add.valor)}
                             </Text>
-                          </Box>
-                          <Box mt={["12px", "0"]}>
-                            <Switch
+
+                            <Checkbox
                               isChecked={item.selected_index.includes(add)}
-                              onChange={(e) => {
+                              onChange={() => {
                                 if (
-                                  item.selected_index.length >= item.qtd_maximo &&
-                                  e.target.checked &&
+                                  item.selected_index.length >=
+                                    item.qtd_maximo &&
+                                  !item.selected_index.includes(add) &&
                                   item.qtd_maximo > 0
                                 ) {
                                   toast({
@@ -1404,69 +1447,328 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                                   handleSwitchChange(itemIndex, addIndex);
                                 }
                               }}
-                              size={["md", "lg"]}
-                              css={{
-                                ".chakra-switch__track[data-checked]": {
-                                  "--switch-bg": data?.primary_color,
+                              size="lg"
+                              sx={{
+                                ".chakra-checkbox__control": {
+                                  w: "20px",
+                                  h: "20px",
+                                  borderRadius: "4px",
+                                  borderColor: "gray.300",
+                                },
+                                ".chakra-checkbox__control[data-checked]": {
+                                  bg: data?.primary_color || "#CF3F2E",
+                                  borderColor: data?.primary_color || "#CF3F2E",
                                 },
                               }}
                             />
-                          </Box>
+                          </HStack>
                         </Flex>
                       ))}
                     </Box>
-                  ))}
-                </Stack>
-              )}
-
-              <Box borderRadius="32px" border="1px solid #E5E7EB" bg="#FFFFFF" p={["20px", "28px"]}>
-                <FormControl>
-                  <FormLabel color="#111827" fontSize="md" fontWeight={700}>
-                    Adicionar algum detalhe?
-                  </FormLabel>
-                  <Text mb="14px" fontSize="sm" color="#6B7280">
-                    Converse diretamente com o estabelecimento caso queira modificar
-                    algum item. Neste campo não são aceitas modificações que podem
-                    gerar cobrança adicional.
-                  </Text>
-
-                  <Textarea
-                    onChange={(e) => setObservacaoItem(e.target.value)}
-                    value={observacaoItem}
-                    placeholder="Escreva o detalhe aqui..."
-                    size={["sm", "md"]}
-                    border="1px solid #E0E0E0"
-                    borderRadius="24px"
-                    padding="24px"
-                    resize="vertical"
-                    minH="120px"
-                    _focusVisible={{
-                      borderColor: data?.primary_color,
-                      boxShadow: `0 0 0 1px ${data?.primary_color}`,
-                    }}
-                    maxLength={140}
-                    overflow="hidden"
-                  />
-                  <FormHelperText fontSize="sm" color="#6B7280" textAlign="right">
-                    {observacaoItem.length}/140
-                  </FormHelperText>
-                </FormControl>
+                  ));
+                })}
               </Box>
-            </Stack>
+            )}
+
+            {gpAdicionais.length > 0 && (
+              <Stack spacing={6}>
+                {gpAdicionais.map((item, itemIndex) => (
+                  <Box
+                    key={itemIndex}
+                    bg="transparent"
+                    border="none"
+                    borderRadius="0"
+                    overflow="visible"
+                    mt={4}
+                  >
+                    <Flex
+                      flexWrap={["wrap", "initial"]}
+                      w="100%"
+                      p={0}
+                      alignItems="center"
+                      justifyContent="space-between"
+                      bg="transparent"
+                      mb={3}
+                    >
+                      <Box
+                        textAlign={["center", "initial"]}
+                        w={["100%", "60%"]}
+                      >
+                        <Text fontSize="md" fontWeight={700}>
+                          {item.descricao}
+                        </Text>
+                      </Box>
+
+                      <Flex
+                        w={["100%", "auto"]}
+                        justifyContent={["center", "flex-end"]}
+                        mt={["16px", "0"]}
+                        gap="12px"
+                      >
+                        <Box
+                          bg={data?.primary_color || "#F59E0B"}
+                          borderRadius="full"
+                          padding="10px 22px"
+                          fontSize="14px"
+                          fontWeight={700}
+                          color="#fff"
+                        >
+                          {item.selected_index.length} / {item.qtd_maximo}
+                        </Box>
+
+                        {item.obrigatorio === "N" ? (
+                          <Box
+                            bg="#E7F8E7"
+                            borderRadius="full"
+                            padding="10px 22px"
+                            fontSize="12px"
+                            fontWeight={700}
+                            color="#50A773"
+                          >
+                            Opcional
+                          </Box>
+                        ) : (
+                          <Box
+                            bg="#4B5563"
+                            borderRadius="full"
+                            padding="10px 22px"
+                            fontSize="12px"
+                            fontWeight={700}
+                            color="#FFF"
+                          >
+                            Obrigatório
+                          </Box>
+                        )}
+                      </Flex>
+                    </Flex>
+
+                    {item.adicionais.map((add, addIndex) => (
+                      <Flex
+                        key={add.id}
+                        w="100%"
+                        px={0}
+                        py={3}
+                        alignItems="center"
+                        justifyContent="space-between"
+                        flexWrap="wrap"
+                        borderTop={
+                          addIndex === 0 ? "none" : "1px solid #E5E7EB"
+                        }
+                      >
+                        <Box textAlign="left">
+                          <Text fontSize="md" fontWeight={600}>
+                            {add.descricao}
+                          </Text>
+                        </Box>
+
+                        <HStack spacing="12px" align="center">
+                          <Text fontSize="md" fontWeight={600}>
+                            {moneyFormat.format(add.valor)}
+                          </Text>
+
+                          <Checkbox
+                            isChecked={item.selected_index.includes(add)}
+                            onChange={() => {
+                              if (
+                                item.selected_index.length >= item.qtd_maximo &&
+                                !item.selected_index.includes(add) &&
+                                item.qtd_maximo > 0
+                              ) {
+                                toast({
+                                  title: "Aviso",
+                                  description: `Selecione até ${item.qtd_maximo} opções`,
+                                  status: "warning",
+                                  duration: 2000,
+                                  isClosable: true,
+                                  position: "bottom-center",
+                                });
+                              } else {
+                                handleSwitchChange(itemIndex, addIndex);
+                              }
+                            }}
+                            size="lg"
+                            sx={{
+                              ".chakra-checkbox__control": {
+                                w: "20px",
+                                h: "20px",
+                                borderRadius: "4px",
+                                borderColor: "gray.300",
+                              },
+                              ".chakra-checkbox__control[data-checked]": {
+                                bg: data?.primary_color || "#CF3F2E",
+                                borderColor: data?.primary_color || "#CF3F2E",
+                              },
+                            }}
+                          />
+                        </HStack>
+                      </Flex>
+                    ))}
+                  </Box>
+                ))}
+              </Stack>
+            )}
+
+            <Box bg="transparent" border="none" borderRadius="0" p={0} mt={4}>
+              <FormControl>
+                <FormLabel color="#111827" fontSize="md" fontWeight={700}>
+                  Adicionar algum detalhe?
+                </FormLabel>
+                <Text mb="14px" fontSize="sm" color="#6B7280">
+                  Converse diretamente com o estabelecimento caso queira
+                  modificar algum item. Neste campo não são aceitas modificações
+                  que podem gerar cobrança adicional.
+                </Text>
+
+                <Textarea
+                  onChange={(e) => setObservacaoItem(e.target.value)}
+                  value={observacaoItem}
+                  placeholder="Escreva o detalhe aqui..."
+                  size={["sm", "md"]}
+                  border="1px solid #E0E0E0"
+                  borderRadius="24px"
+                  padding="24px"
+                  resize="vertical"
+                  minH="120px"
+                  _focusVisible={{
+                    borderColor: data?.primary_color,
+                    boxShadow: `0 0 0 1px ${data?.primary_color}`,
+                  }}
+                  maxLength={140}
+                  overflow="hidden"
+                />
+                <FormHelperText fontSize="sm" color="#6B7280" textAlign="right">
+                  {observacaoItem.length}/140
+                </FormHelperText>
+              </FormControl>
+            </Box>
+          </Stack>
+        </Box>
+
+        {/* FOOTER / CTA – Barra de adicionar (mesma da /lista mas customizada) */}
+        {opened && (
+          <Box
+            position="fixed"
+            left="0"
+            right="0"
+            bottom="0"
+            zIndex={998}
+            bg="white"
+            borderTopWidth="1px"
+            borderTopColor="gray.200"
+            boxShadow="0 -8px 24px rgba(0,0,0,0.06)"
+            px="16px"
+            py="14px"
+          >
+            <HStack maxW="640px" mx="auto" spacing={4}>
+              <VStack align="start" spacing={0} flex="1">
+                <Text fontSize="sm" color="gray.500">
+                  Total dos pedidos
+                </Text>
+                <HStack spacing={2}>
+                  <Text fontWeight="bold" fontSize="lg">
+                    {moneyFormat.format(total)}
+                  </Text>
+                  <Text fontSize="sm" color="gray.500">
+                    / {count} {count === 1 ? "item" : "itens"}
+                  </Text>
+                </HStack>
+              </VStack>
+
+              <Button
+                className="ver-sacola-btn"
+                onClick={handleItemOrder}
+                isDisabled={disable}
+                color="white"
+                bg="#CF3F2E"
+                _hover={{ bg: "#B53626" }}
+                _active={{ bg: "#B53626" }}
+                _disabled={{ bg: "#E8A8A0", cursor: "not-allowed" }}
+                size="lg"
+                borderRadius="xl"
+                px={6}
+                fontSize="14px"
+              >
+                Adicionar
+              </Button>
+            </HStack>
           </Box>
-        </Container>
+        )}
       </Box>
 
-      <FooterProduct
-        data={data}
-        disable={disable}
-        handleItemOrder={handleItemOrder}
-        opened={opened}
-        total={total}
+      {/* Cart Modal */}
+      <CartModal
+        isOpen={isCartOpen}
+        onClose={onCartClose}
+        items={cartItems.map((item) => ({
+          id: item.id,
+          name: item.descricao || item.tag || "Produto",
+          price: item.valor_total / item.quantidade,
+          imageUrl: item.foto_destaque || "/placeholder.png",
+          qty: item.quantidade,
+        }))}
+        subtotal={cartTotal}
+        discounts={0}
+        onInc={(id) => {
+          const updatedBag = cartItems.map((item) => {
+            if (item.id === id) {
+              const newQty = item.quantidade + 1;
+              const unitPrice = item.valor_total / item.quantidade;
+              return {
+                ...item,
+                quantidade: newQty,
+                valor_total: unitPrice * newQty,
+              };
+            }
+            return item;
+          });
+          setCartItems(updatedBag);
+          setCartTotal(
+            updatedBag.reduce((sum, item) => sum + item.valor_total, 0)
+          );
+          localStorage.setItem(
+            "@menu-digital:" + subdomain + ":bag",
+            JSON.stringify(updatedBag)
+          );
+        }}
+        onDec={(id) => {
+          const updatedBag = cartItems
+            .map((item) => {
+              if (item.id === id && item.quantidade > 1) {
+                const newQty = item.quantidade - 1;
+                const unitPrice = item.valor_total / item.quantidade;
+                return {
+                  ...item,
+                  quantidade: newQty,
+                  valor_total: unitPrice * newQty,
+                };
+              }
+              return item;
+            })
+            .filter((item) => item.quantidade > 0);
+          setCartItems(updatedBag);
+          setCartTotal(
+            updatedBag.reduce((sum, item) => sum + item.valor_total, 0)
+          );
+          localStorage.setItem(
+            "@menu-digital:" + subdomain + ":bag",
+            JSON.stringify(updatedBag)
+          );
+        }}
+        onRemove={(id) => {
+          const updatedBag = cartItems.filter((item) => item.id !== id);
+          setCartItems(updatedBag);
+          setCartTotal(
+            updatedBag.reduce((sum, item) => sum + item.valor_total, 0)
+          );
+          localStorage.setItem(
+            "@menu-digital:" + subdomain + ":bag",
+            JSON.stringify(updatedBag)
+          );
+        }}
+        subdomain={subdomain}
       />
-    </>
+    </Box>
   );
-
 }
 
 function mapState(state) {

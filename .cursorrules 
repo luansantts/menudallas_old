@@ -1,0 +1,93 @@
+Perfeito — segue um conteúdo pronto para o arquivo .cursorrules.
+Cole este texto na raiz do projeto (sem extensão extra). Ele dá “memória” ao Cursor sobre o escopo visual e as regras de não alterar lógica.
+
+⸻
+
+.cursorrules
+
+Contexto do projeto
+	•	App Next.js (Pages Router).
+	•	Objetivo: remodelar APENAS o design/estilos para ficar idêntico ao layout de referência (estilo McDonald’s).
+	•	Proibido: alterar lógica/rotas/SSR/handlers/stores/contratos de props/estado; adicionar dependências; mover/renomear arquivos.
+
+Regras invariáveis (sempre ativas)
+	•	NÃO altere lógica nem comportamento (inclui getServerSideProps, navegação, estados, APIs).
+	•	SOMENTE CSS/markup leve (classes, props de estilo, containers sem alterar dados).
+	•	Sem novas libs. Use o que já existe no projeto (Chakra/UI + CSS global).
+	•	Se algo exigir lógica, NÃO faça. Comente // TODO: exige mudança de lógica e continue com a parte visual.
+	•	Saída padrão: retorne apenas o diff/patch quando eu pedir mudanças.
+
+Páginas/áreas foco
+	•	/lista (tela da loja): banner/hero, painel com informações da loja, chips/categorias, lista de produtos, footer/cart.
+
+Padrão visual alvo (deve ficar IDÊNTICO ao mock McDonald’s)
+	1.	Painel branco que sobrepõe o banner com cantos grandes (raio ~24px) e sombra leve; centralizado (máx ~720px).
+	2.	Header do painel:
+	•	Logo à esquerda (≈56px, bordas 12px).
+	•	Linha 1: Nome da loja à esquerda e badge de nota (estrela + valor) em pílula à direita (mesma linha).
+	•	Linha 2: Categoria em cinza.
+	•	Linha 3: “Aberto” com ícone de relógio e texto verde, sem fundo colorido, alinhado à esquerda.
+	3.	Chips/categorias:
+	•	Container centralizado (mesma largura do painel), sem sombra pesada, borda sutil, cantos arredondados.
+	•	Gaps uniformes entre pílulas; texto centralizado nas pílulas.
+	•	Ativo: fundo amarelo claro; inativos: borda cinza + fundo branco.
+	4.	Divisórias:
+	•	Uma linha discreta imediatamente abaixo do bloco de informações da loja.
+	•	Entre cada produto, a mesma linha divisória, com espaçamentos consistentes.
+	5.	Lista de produtos:
+	•	Texto à esquerda (título forte; descrição 2 linhas com ellipsis; preço em negrito).
+	•	Thumb à direita com tamanho uniforme (≈92–96px), cantos 16px, object-fit: cover; alinhamento vertical consistente.
+	6.	Botões sobre o banner:
+	•	Esquerda: Voltar (mantém a lógica existente de voltar).
+	•	Direita: Carrinho (sacola) com o mesmo handler atual e badge; apenas o ícone é visual.
+
+Convenção de classes (usar/assumir quando necessário)
+	•	store-panel (painel branco arredondado que sobrepõe o banner)
+	•	store-info (linha logo + coluna de textos)
+	•	store-info-top (linha “nome à esquerda / rating à direita”)
+	•	store-name, store-category
+	•	rating-badge (pílula ★ + nota, à direita do nome)
+	•	status-open (ícone de relógio + texto verde)
+	•	menu-card (container dos chips)
+	•	chips, chip, chip--active
+	•	divider (linha)
+	•	product-list, product-card, product-text, product-price, product-thumb
+
+Se o markup atual não tiver essas classes, adicioná-las sem alterar handlers ou a ordem dos dados.
+
+Diretrizes de espaçamento/alinhamento
+	•	Largura máxima dos blocos centrais: ~720px, com margin: 0 auto e padding lateral ~16px.
+	•	Espaço entre banner e painel: painel deve invadir o banner com margem negativa sutil (efeito sobreposição).
+	•	Gaps uniformes entre chips (≈12px).
+	•	Divisórias com cor cinza clara (consistente no painel e entre produtos).
+
+Cores e semântica (aproximação do mock)
+	•	“Aberto”: verde (ex.: #10B981) — ícone de relógio + texto.
+	•	Badge de estrela: fundo amarelo claro (ex.: #FFF7E0), texto/ícone âmbar suave.
+	•	Texto descritivo: cinza médio (ex.: #6B7280).
+
+Como responder aos meus pedidos
+	•	Sempre responder com diff/patch dos arquivos alterados (CSS + inclusão de classes/props de estilo).
+	•	Não incluir explicações longas no patch; comentários apenas quando bloquear por lógica.
+	•	Se eu pedir várias coisas, aplique em micro-commits (um ajuste visual por patch).
+
+Exemplos de tarefas frequentes (sem lógica)
+	•	“Mover a estrela para a direita do nome na mesma linha.”
+	•	“Aberto com relógio e texto verde, sem fundo.”
+	•	“Centralizar menu-card, remover sombra pesada, manter borda sutil.”
+	•	“Uniformizar gaps dos chips.”
+	•	“Criar divider abaixo do header e entre produtos.”
+	•	“Padronizar thumb dos produtos (mesmo tamanho, cantos 16px, à direita).”
+
+Check visual antes de encerrar uma tarefa
+	•	Painel e menus com cantos grandes e alinhamento central.
+	•	Nome + rating-badge na mesma linha (rating à direita).
+	•	“Aberto” com relógio e verde, sob o nome/categoria.
+	•	Chips com gaps uniformes; ativo amarelo; container centralizado sem sombra forte.
+	•	Divisórias visíveis e consistentes.
+	•	Thumbs dos produtos iguais e alinhadas à direita.
+
+⸻
+
+Importante: Qualquer tentativa de alterar lógica/rotas/SSR deve ser recusada e marcada com // TODO: exige mudança de lógica.
+O foco é alcançar paridade visual 1:1 com o mock, somente com estilos/markup leve.

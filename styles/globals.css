@@ -1,3 +1,72 @@
+/* Araboto Bold */
+@font-face {
+  font-family: "Araboto";
+  src: url("/fonts/Araboto/Araboto-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Touche — Indian Type Foundry */
+@font-face {
+  font-family: "Touche";
+  src: url("/fonts/touche/Touche-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Touche";
+  src: url("/fonts/touche/Touche-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Touche";
+  src: url("/fonts/touche/Touche-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* TT Hoves Pro DemiBold */
+@font-face {
+  font-family: "TT Hoves Pro";
+  src: url("/fonts/tt-hoves/TT-Hoves-Pro-DemiBold.woff2") format("woff2");
+  font-weight: 600; /* Demi Bold */
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "TT Hoves Pro Demi Bold";
+  src: url("/fonts/tt-hoves/TT-Hoves-Pro-DemiBold.woff2") format("woff2"),
+    url("/fonts/tt-hoves/TT-Hoves-Pro-DemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Novecento Sans Medium */
+@font-face {
+  font-family: "Novecento Sans";
+  src: url("/fonts/NovecentoSans-Medium.woff2") format("woff2"),
+    url("/fonts/NovecentoSans-Medium.woff") format("woff");
+  font-weight: 500; /* Medium */
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Axiforma Semi Bold */
+@font-face {
+  font-family: "Axiforma";
+  src: url("/fonts/Axiforma-SemiBold.woff2") format("woff2"),
+    url("/fonts/Axiforma-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 html,
 body {
   padding: 0;
@@ -47,18 +116,56 @@ a {
   padding: 0 16px;
 }
 
-.store-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
+.store-panel {
+  background: #fff;
+  border-radius: 32px;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15);
+  margin: -52px auto 16px;
+  padding: 20px;
+  border: 1px solid #eef1f4;
 }
 
-.store-info-col {
-  display: grid;
-  grid-template-rows: auto auto auto;
+.store-info {
+  display: flex;
+  align-items: initial !important;
+  gap: 12px;
+  padding: 18px 0 0 0;
+  margin-top: 8px;
+  background: transparent;
+  box-shadow: none;
+  position: static;
+  z-index: auto;
+}
+
+.store-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 12px;
+  background-color: #fff;
+}
+
+.store-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 4px;
+}
+
+.store-info-content {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+  align-items: flex-start;
   width: 100%;
+  padding: 0;
+  max-width: 720px;
+}
+
+.status-container {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
 }
 
 .store-info-top {
@@ -66,89 +173,840 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  width: 100%;
+}
+
+.store-info-top .rating-badge {
+  margin-left: auto;
 }
 
 .store-name {
-  font-weight: 800;
-  font-size: 20px;
+  font-family: "Axiforma", system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 24px;
   line-height: 1.2;
+  letter-spacing: -0.01em;
   margin: 0;
+  flex: 1;
+  color: #111827;
 }
 
 .store-category {
   color: #6b7280;
   font-size: 14px;
-}
-
-.rating-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: #fff7e0;
-  font-weight: 700;
-  color: #a16207;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .status-open {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: #10b981;
-  font-weight: 600;
-  font-size: 14px;
+  gap: 4px;
+  color: #36b37e;
+  font-weight: 500;
+  font-size: 15px;
+  margin: 0;
 }
 
 .rating-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
-  background: #fff7e0;
-  font-weight: 700;
-  color: #a16207;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.rating-badge .star {
+  font-size: 15px;
+  line-height: 1;
+  color: #f59e0b;
+}
+
+.product-divider {
+  height: 1px;
+  background: #e9ecef;
+  width: 100%;
+  margin: 0 0 16px 0;
+}
+
+.store-divider {
+  height: 1px;
+  background: #e9ecef;
+  width: 100%;
+  margin: 14px 0 18px 0;
+}
+
+.content-panel {
+  background: #ffffff;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+  margin-top: -24px;
+  position: relative;
+  z-index: 1;
 }
 
 .menu-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: none !important;
-  border: 1px solid #e5e7eb;
-  margin: 12px auto 16px;
-  padding: 12px;
-}
-
-.menu-card,
-.menu-card > * {
+  width: 100%;
   max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+  background: transparent;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  position: static !important;
 }
 
 .chips {
   display: flex;
   gap: 12px;
-  overflow-x: auto;
-  padding: 8px;
   align-items: center;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 0;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin: 12px 0 20px 0;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chips > * {
+  flex: 0 0 auto;
+}
+
+.keen-slider__slide {
+  width: auto !important;
+  min-width: auto !important;
+  max-width: none !important;
+  flex: 0 0 auto !important;
+  overflow: visible !important;
 }
 
 .chip {
-  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 16px;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
-  padding: 10px 18px;
-  font-weight: 700;
+  background: #fff;
   color: #374151;
+  font-weight: 700;
   white-space: nowrap;
-  transition: 0.2s ease;
-  box-shadow: none;
+  text-align: center;
 }
 
 .chip--active {
   background: #fde68a;
   border-color: #fde68a;
-  color: #1f2a37;
-} /*# sourceMappingURL=globals.css.map */
+  color: #7a5c00;
+}
+
+.products-block {
+  border-radius: 24px;
+  border: 1px solid #ececec;
+  overflow: hidden;
+}
+
+.product-card {
+  gap: 16px;
+}
+
+.product-card + .product-card {
+  border-top: 1px solid #e5e7eb;
+}
+
+.product-card__description {
+  line-height: 1.4;
+}
+
+.product-card__price {
+  color: #111827;
+  font-weight: 700;
+}
+
+.product-card__price--strike {
+  color: #9ca3af;
+}
+
+.product-thumb {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+.product-thumb__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.products-block {
+  border-radius: 24px;
+  border: 1px solid #ececec;
+  overflow: hidden;
+}
+
+.product-card {
+  gap: 16px;
+}
+
+.product-card + .product-card {
+  border-top: 1px solid #e5e7eb;
+}
+
+.product-card__description {
+  line-height: 1.4;
+}
+
+.product-card__price {
+  color: #111827;
+  font-weight: 700;
+}
+
+.product-card__price--strike {
+  color: #9ca3af;
+}
+
+.product-thumb {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+.product-thumb__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1e1e1e;
+  line-height: 1.4;
+}
+
+.product-description {
+  font-size: 15px;
+  color: #737373;
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+.product-price {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-top: 8px;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+/* Sacola - valor do item com fonte menor */
+#chakra-portal .bag-price {
+  font-size: 18px !important;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  #chakra-portal .bag-price {
+    font-size: 20px !important;
+  }
+}
+
+/* ==== NOME DOS PRODUTOS ==== */
+.page-list .list-product-title,
+.list-product-title,
+.page-list h3.list-product-title,
+.menu-card .chakra-text.list-product-title {
+  font-family: "Touche", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.2px;
+  color: #1f2937; /* cinza escuro elegante */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==== TÍTULO DAS CATEGORIAS (ex: *PIZZA*) ==== */
+.category-title,
+.menu-card .chakra-text.css-150a28k,
+.menu-card [data-role="category-title"] {
+  font-family: "TT Hoves Pro", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif !important;
+  font-weight: 600; /* Demi Bold */
+  font-size: 14px !important;
+}
+
+.page-list .list-product-subtitle {
+  font-size: 14px;
+  line-height: 20px;
+  color: #6b7280; /* cinza médio */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* até 2 linhas */
+  line-clamp: 2; /* propriedade padrão para compatibilidade */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ==== PREÇO DOS PRODUTOS: Novecento Sans Medium 14px ==== */
+.product-price,
+.menu-card .product-price,
+.menu-card .chakra-text.product-price {
+  font-size: 14px !important;
+  font-family: "Novecento Sans", "Novecento Sans Medium", system-ui,
+    -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-weight: 500 !important; /* Medium */
+}
+
+/* ==== Lista de produtos: título quebra, imagem fixa ==== */
+.product-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.product-thumb {
+  flex: 0 0 auto;
+}
+.product-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.list-product-title {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.2 !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ==== /lista – card do cabeçalho da loja ==== */
+/* 1) Subir um pouco a logo */
+img.store-logo {
+  transform: translateY(-4px);
+}
+
+/* ==== /lista → chips (pills) ==== */
+.page-center .menu-card .chakra-button.chip {
+  padding: 10px !important;
+  font-size: 10px !important;
+  line-height: 11px !important;
+  border-radius: 9999px !important;
+  border: 1px solid var(--chip-border, #e2e8f0) !important;
+  background: #fff !important;
+  color: var(--chip-text, #2d3748) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  transition: 0.15s ease !important;
+}
+.page-center .menu-card .menu-chip.chip--active {
+  background: var(--brand-secondary) !important;
+  border-color: var(--brand-secondary) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.24) !important;
+}
+
+.page-center .menu-card .menu-chip.chip--active * {
+  color: #fff !important;
+}
+.page-center .menu-card .keen-slider.chips {
+  gap: 1px !important;
+}
+
+/*# sourceMappingURL=globals.css.map */
+/* Centraliza a mensagem da sacola vazia na modal */
+.chakra-modal__body .chakra-stack.css-17yup6b {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100% !important;
+  text-align: center !important;
+}
+
+/* Ajuste opcional para o texto da sacola vazia */
+.chakra-modal__body .chakra-text.css-q9k0mw {
+  color: #6b3df6;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+/* ===== Produto: Stepper com símbolos tipográficos ===== */
+
+/* Checkbox Chakra marcado global */
+.chakra-checkbox__control[data-checked] {
+  background: var(--brand) !important;
+  border-color: var(--brand) !important;
+}
+.chakra-checkbox__control[data-checked] svg {
+  color: #fff !important;
+  stroke: #fff !important;
+}
+.chakra-checkbox__control[data-checked]:hover,
+.chakra-checkbox__control[data-checked][data-focus] {
+  filter: brightness(0.95);
+}
+
+/* Botão diminuir (esquerda) — fundo branco, borda suave, ícone "<" */
+.css-16mdql3 {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  color: #111827 !important;
+  box-shadow: none !important;
+}
+.css-16mdql3 svg {
+  display: none;
+}
+.css-16mdql3::before {
+  content: "<";
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Botão aumentar (direita) — vermelho sólido com ícone ">" branco */
+.css-16ruhr {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand) !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+.css-16ruhr svg {
+  display: none;
+}
+.css-16ruhr::before {
+  content: ">";
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Número entre os botões: alinhamento */
+.css-tbxyxb {
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Remove o gradiente/fade do card de produto */
+.css-1tunda8 > .css-1kb4ht2 {
+  display: none !important;
+}
+
+/* Se o gradiente vier via pseudo-elemento, remove também */
+.css-1tunda8::after {
+  content: none !important;
+  background: none !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+/* Chips (categorias) e Pills - /lista */
+.menu-chip {
+  height: 28px !important;
+  padding-inline: 12px !important;
+  border-radius: 9999px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+.menu-pill {
+  height: 24px !important;
+  padding-inline: 10px !important;
+  border-radius: 9999px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+/* Espaçamento menor entre slides do carrossel de chips */
+.keen-slider.chips .keen-slider__slide {
+  padding-right: 8px;
+}
+
+/* Chips compactos + ativo vermelho */
+:root {
+  --brand-500: #cf3f2e;
+  --chip-text: #1f2937;
+  --chip-border: #e5e7eb;
+  --brand: #cf3f2e;
+  --brand-secondary: #f59e0b;
+}
+
+.keen-slider.chips {
+  gap: 1px !important;
+  padding: 0 8px !important;
+}
+.keen-slider.chips .keen-slider__slide {
+  width: auto !important;
+  padding-right: 0 !important;
+}
+
+.chakra-button.chip {
+  padding: 10px !important;
+  font-size: 9px !important;
+  line-height: 11px !important;
+  border-radius: 9999px !important;
+  border: 1px solid var(--chip-border, #e2e8f0) !important;
+  background: #fff !important;
+  color: var(--chip-text, #2d3748) !important;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%) !important;
+  transition: 0.15s ease !important;
+}
+.chakra-button.chip:hover {
+  border-color: #d1d5db !important;
+}
+
+.chakra-button.chip[aria-selected="true"],
+.chakra-button.chip[aria-pressed="true"],
+.chakra-button.chip[aria-current="true"],
+.chakra-button.chip.is-active {
+  background: var(--brand-secondary) !important;
+  border-color: var(--brand-secondary) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.18) !important;
+}
+
+.chakra-button.chip[aria-selected="true"] *,
+.chakra-button.chip[aria-pressed="true"] *,
+.chakra-button.chip[aria-current="true"] *,
+.chakra-button.chip.is-active * {
+  color: #fff !important;
+}
+
+.chakra-button.chip svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Ativo amarelo via classe estável (chip--active) */
+.menu-chip.chip--active {
+  background: var(--brand-secondary) !important;
+  border-color: var(--brand-secondary) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.24) !important;
+}
+
+/* Garante texto branco nos filhos quando ativo */
+.menu-chip.chip--active * {
+  color: #fff !important;
+}
+
+/* Estados de interação no ativo */
+.menu-chip.chip--active:hover {
+  filter: brightness(0.95);
+}
+
+.menu-chip.chip--active:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.15) !important;
+  outline-offset: 2px !important;
+}
+
+/* Acessibilidade no foco */
+.menu-chip:focus-visible {
+  outline: 2px solid var(--brand-secondary) !important;
+  outline-offset: 2px !important;
+}
+
+/* ===== Ajustes de espaçamento da Sacola (Modal/Drawer) ===== */
+/* Zera o espaço no topo do corpo do modal */
+.chakra-modal__content .chakra-modal__body {
+  padding-top: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Primeiro stack dentro do body sem margem/padding extra */
+.chakra-modal__body > .chakra-stack:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Cabeçalho enxuto e com divisor inferior sutil */
+.chakra-modal__header {
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid var(--chakra-colors-gray-100);
+}
+
+/* Sacola: alinhar conteúdo no topo (sem centralizar) */
+.chakra-modal__content .chakra-modal__body,
+.chakra-modal__content .chakra-stack.css-17yup6b {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  min-height: auto;
+  padding-top: 8px;
+}
+.chakra-modal__content {
+  display: flex;
+}
+.chakra-modal__body {
+  flex: 1 1 auto;
+}
+
+/* Sacola (cart-modal): item em linha, thumb menor e price-pill reduzido */
+.cart-modal .chakra-modal__body {
+  padding-top: 8px;
+}
+.cart-modal .cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin-top: 0;
+}
+.cart-modal .cart-item .thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.cart-modal .cart-item .title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 190px;
+}
+.cart-item-title {
+  font-size: 12px !important;
+  font-family: "TT Hoves Pro Demi Bold", "TT Hoves Pro DemiBold", "TT Hoves Pro",
+    sans-serif !important;
+}
+.cart-modal .cart-item .price-pill {
+  font-size: 0.875rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: var(--chakra-colors-gray-50);
+  line-height: 1.2;
+}
+.cart-modal .cart-item .qty {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* SweetAlert2 - Estilo alinhado com modais Chakra */
+.swal2-container.swal2-center .swal2-popup.md-popup {
+  width: 88vw;
+  max-width: 420px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.1);
+  padding: 20px 20px 16px;
+}
+
+.swal2-title.md-title {
+  font-family: "Araboto", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+  font-weight: 700;
+  font-size: 20px;
+  color: #1f2937;
+  margin: 0 0 6px;
+}
+
+.swal2-html-container.md-body {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #6b7280;
+  margin: 0 0 16px;
+}
+
+.swal2-actions.md-actions {
+  gap: 12px;
+  margin: 0;
+}
+
+.md-btn {
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 16px;
+  border: 0;
+}
+
+.md-btn--cancel {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.md-btn--confirm {
+  background: #cf3f2e;
+  color: #fff;
+}
+
+.swal2-icon.md-icon {
+  margin-top: 2px;
+}
+
+/* Modal/Drawer de Sabores - Estilo padrão do site */
+.md-flavors .chakra-modal__content,
+.md-flavors .chakra-drawer__content {
+  width: 88vw;
+  max-width: 420px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.1);
+  padding: 20px 20px 16px;
+}
+
+.md-flavors .chakra-modal__header,
+.md-flavors .chakra-drawer__header {
+  text-align: center;
+  font-family: "Araboto", system-ui, -apple-system, "Segoe UI", Roboto;
+  font-weight: 700;
+  font-size: 20px;
+  color: #1f2937;
+  margin: 0 0 6px;
+}
+
+.md-flavors .subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.md-flavors .chakra-modal__body,
+.md-flavors .chakra-drawer__body {
+  padding-top: 0;
+}
+
+.md-flavors .chip-count {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  background: #f59e0b;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.md-flavors .chip-required {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  background: #fdecec;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+.md-flavors .flavors-list {
+  display: grid;
+  gap: 10px;
+}
+
+.md-flavors .flavor-item {
+  display: grid;
+  grid-template-columns: 1fr auto 36px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s;
+}
+
+.md-flavors .flavor-item:hover {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.md-flavors .flavor-name {
+  font-weight: 700;
+  color: #111827;
+  font-size: 16px;
+}
+
+.md-flavors .flavor-price {
+  font-weight: 700;
+  color: #111827;
+  font-size: 16px;
+}
+
+.md-flavors .flavor-check .chakra-switch__track,
+.md-flavors .flavor-check .chakra-checkbox__control {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 2px solid #cbd5e1;
+  background: #fff;
+}
+
+.md-flavors .flavor-check .chakra-checkbox__control[data-checked],
+.md-flavors .flavor-check .chakra-switch__track[data-checked] {
+  border-color: #cf3f2e;
+  background: #cf3f2e;
+}
+
+.md-flavors .actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.md-flavors .btn {
+  height: 48px;
+  border-radius: 9999px;
+  padding: 0 24px;
+  font-weight: 600;
+  font-size: 16px;
+  border: 0;
+}
+
+.md-flavors .btn-cancel {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.md-flavors .btn-confirm {
+  background: #cf3f2e;
+  color: #fff;
+}

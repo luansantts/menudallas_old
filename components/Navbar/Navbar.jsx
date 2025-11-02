@@ -26,8 +26,9 @@ import { useRouter } from "next/router";
 import React from "react";
 import { BsFillChatDotsFill } from "react-icons/bs";
 import { FiArrowLeft, FiMenu, FiSearch } from "react-icons/fi";
-import { MdHome, MdPercent, MdPerson, MdShoppingBag } from "react-icons/md";
+import { MdHome, MdPercent, MdPerson } from "react-icons/md";
 import { FooterStore } from "../FooterStore";
+import BagSquareIcon from "../icons/BagSquareIcon";
 
 function Navbar({
   isHome = true,
@@ -64,11 +65,7 @@ function Navbar({
             h="48px"
             _hover={{ bg: "white", transform: "scale(0.98)" }}
           />
-          <FooterStore
-            data={data}
-            subdomain={subdomain}
-            variant="floating"
-          />
+          <FooterStore data={data} subdomain={subdomain} variant="floating" />
         </Flex>
       </Box>
     );
@@ -266,7 +263,7 @@ function SidebarContent({ isHome, ...props }) {
             padding={["15px", "15px", ""]}
             {...props}
           >
-            <Icon as={MdShoppingBag} fontSize="28px" mr="10px" fill="#000" />
+            <BagSquareIcon size={28} />
             <Text
               fontSize="sm"
               pt="3px"

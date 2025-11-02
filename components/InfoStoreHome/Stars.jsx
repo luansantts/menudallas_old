@@ -1,4 +1,4 @@
-import { Box, Icon, Skeleton, Text, Flex } from "@chakra-ui/react";
+import { Box, Flex, Icon, Skeleton, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { BsFillStarFill } from "react-icons/bs";
 import { connect } from "react-redux";

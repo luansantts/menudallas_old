@@ -11,10 +11,20 @@ import { Box } from "@chakra-ui/react";
 import url from "url";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
+import StickyCartBar from "../../components/StickyCartBar/StickyCartBar";
+import { useDisclosure } from "@chakra-ui/react";
+import CartModal from "../../components/CartModal/CartModal";
 
 function lista({ data, subdomain }) {
   const [loading, setLoading] = useState(true);
   const [refreshSearch, setRefreshSearch] = useState(true);
+  const [cartItems, setCartItems] = useState([]);
+  const [cartTotal, setCartTotal] = useState(0);
+  const {
+    isOpen: isCartOpen,
+    onOpen: onCartOpen,
+    onClose: onCartClose,
+  } = useDisclosure();
   const router = useRouter();
 
   useEffect(() => {
@@ -24,6 +34,25 @@ function lista({ data, subdomain }) {
       router.push("/");
     }
   }, [data, subdomain]);
+
+  // Load cart items from localStorage
+  useEffect(() => {
+    const loadCart = () => {
+      const bag = localStorage.getItem("@menu-digital:" + subdomain + ":bag");
+      if (bag) {
+        const items = JSON.parse(bag);
+        setCartItems(items);
+        // Calculate total
+        const total = items.reduce((sum, item) => sum + item.valor_total, 0);
+        setCartTotal(total);
+      }
+    };
+
+    loadCart();
+    // Reload cart periodically to keep it updated
+    const interval = setInterval(loadCart, 1000);
+    return () => clearInterval(interval);
+  }, [subdomain]);
 
   if (isEmpty(data)) {
     return null;
@@ -67,20 +96,99 @@ function lista({ data, subdomain }) {
 
           <Box id="header">
             <HeaderHomeStore data={data} />
-            <InfoStoreHome
-              type={2}
+          </Box>
+          <Box className="content-panel page-list" pb="88px">
+            <InfoStoreHome type={2} data={data} subdomain={subdomain} />
+            <MenuOptionsStore data={data} subdomain={subdomain} />
+            <MainProducts
               data={data}
               subdomain={subdomain}
+              refreshSearch={refreshSearch}
+              setRefreshSearch={setRefreshSearch}
             />
-            <MenuOptionsStore data={data} subdomain={subdomain} />
+            <ProductsList data={data} />
           </Box>
-          <MainProducts
-            data={data}
-            subdomain={subdomain}
-            refreshSearch={refreshSearch}
-            setRefreshSearch={setRefreshSearch}
+
+          {/* Sticky Cart Bar - Only on /lista */}
+          {cartItems.length > 0 && (
+            <StickyCartBar
+              total={cartTotal}
+              itemsCount={cartItems.length}
+              onOpenCart={onCartOpen}
+            />
+          )}
+
+          {/* Cart Modal */}
+          <CartModal
+            isOpen={isCartOpen}
+            onClose={onCartClose}
+            items={cartItems.map((item) => ({
+              id: item.id,
+              name: item.descricao || item.tag || "Produto",
+              price: item.valor_total / item.quantidade,
+              imageUrl: item.foto_destaque || "/placeholder.png",
+              qty: item.quantidade,
+            }))}
+            subtotal={cartTotal}
+            discounts={0}
+            onInc={(id) => {
+              const updatedBag = cartItems.map((item) => {
+                if (item.id === id) {
+                  const newQty = item.quantidade + 1;
+                  const unitPrice = item.valor_total / item.quantidade;
+                  return {
+                    ...item,
+                    quantidade: newQty,
+                    valor_total: unitPrice * newQty,
+                  };
+                }
+                return item;
+              });
+              setCartItems(updatedBag);
+              setCartTotal(
+                updatedBag.reduce((sum, item) => sum + item.valor_total, 0)
+              );
+              localStorage.setItem(
+                "@menu-digital:" + subdomain + ":bag",
+                JSON.stringify(updatedBag)
+              );
+            }}
+            onDec={(id) => {
+              const updatedBag = cartItems
+                .map((item) => {
+                  if (item.id === id && item.quantidade > 1) {
+                    const newQty = item.quantidade - 1;
+                    const unitPrice = item.valor_total / item.quantidade;
+                    return {
+                      ...item,
+                      quantidade: newQty,
+                      valor_total: unitPrice * newQty,
+                    };
+                  }
+                  return item;
+                })
+                .filter((item) => item.quantidade > 0);
+              setCartItems(updatedBag);
+              setCartTotal(
+                updatedBag.reduce((sum, item) => sum + item.valor_total, 0)
+              );
+              localStorage.setItem(
+                "@menu-digital:" + subdomain + ":bag",
+                JSON.stringify(updatedBag)
+              );
+            }}
+            onRemove={(id) => {
+              const updatedBag = cartItems.filter((item) => item.id !== id);
+              setCartItems(updatedBag);
+              setCartTotal(
+                updatedBag.reduce((sum, item) => sum + item.valor_total, 0)
+              );
+              localStorage.setItem(
+                "@menu-digital:" + subdomain + ":bag",
+                JSON.stringify(updatedBag)
+              );
+            }}
           />
-          <ProductsList data={data} />
         </>
       )}
     </>

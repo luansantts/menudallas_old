@@ -1,9 +1,11 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, Icon } from "@chakra-ui/react";
+import { FiClock } from "react-icons/fi";
 import React from "react";
 
 function StatusStore({ status = 1, variant = "classic" }) {
-  const isClosed = status === 0;
-  const stateColor = isClosed ? "#c90000" : "#468847";
+  const isOpen = status === true || status === 1;
+  const isClosed = !isOpen;
+  const stateColor = isClosed ? "#DC2626" : "#059669";
 
   if (variant === "pill") {
     return (
@@ -12,7 +14,7 @@ function StatusStore({ status = 1, variant = "classic" }) {
         borderRadius="999px"
         px="14px"
         py="6px"
-        bg={isClosed ? "rgba(234, 84, 85, 0.15)" : "rgba(40, 199, 111, 0.15)"}
+        bg={isClosed ? "#FEF2F2" : "#ECFDF5"}
         color={stateColor}
         fontSize="sm"
         fontWeight={600}
@@ -47,37 +49,13 @@ function StatusStore({ status = 1, variant = "classic" }) {
   return (
     <Flex
       alignItems="center"
-      w="min-content"
-      borderRadius="999px"
-      bg={isClosed ? "#FEF2F2" : "#DCFCE7"}
-      padding="6px 12px"
-      h="auto"
-      color={isClosed ? "#DC2626" : "#16A34A"}
-      fontSize="12px"
-      fontWeight={600}
+      gap="4px"
+      bg="transparent"
+      color={isClosed ? "#DC2626" : "#059669"}
+      fontSize="15px"
+      fontWeight={500}
     >
-      <Box
-        animation="btn-pisca 1s linear infinite"
-        css={`
-          @keyframes btn-pisca {
-            0% {
-              opacity: 0.5;
-            }
-            50% {
-              opacity: 1;
-            }
-            100% {
-              opacity: 0.5;
-            }
-          }
-        `}
-        mr="6px"
-        w="6px"
-        minW="6px"
-        h="6px"
-        bg={isClosed ? "#DC2626" : "#16A34A"}
-        borderRadius="full"
-      />
+      <Icon as={FiClock} fontSize="15px" />
       <Text>{isClosed ? "Fechado" : "Aberto"}</Text>
     </Flex>
   );

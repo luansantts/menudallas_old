@@ -2,11 +2,13 @@ import {
   Box,
   Button,
   Flex,
+  HStack,
   Icon,
   Menu,
   MenuButton,
   MenuList,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -490,18 +492,23 @@ const StorefrontInfo = ({ data, subdomain, shareUrl }) => {
   const isOpen = getOpened(data);
 
   return (
-    <Box className="page-center store-info">
+    <Box className="page-center">
       <Box className="store-info">
-        <Image
-          src={logoUrl}
-          width={56}
-          height={56}
-          borderRadius="12px"
-          objectFit="cover"
-          alt={data?.nome || "Logo da loja"}
-          className="store-logo"
-        />
-        <Box className="store-info-col">
+        <Box className="store-left">
+          <Image
+            src={logoUrl}
+            width={56}
+            height={56}
+            borderRadius="12px"
+            objectFit="cover"
+            alt={data?.nome || "Logo da loja"}
+            className="store-logo"
+          />
+          <Box className="status-container">
+            <StatusStore status={isOpen} />
+          </Box>
+        </Box>
+        <Box className="store-info-content">
           <Box className="store-info-top">
             <Text className="store-name">{displayName || data?.nome}</Text>
             <Box className="rating-badge">
@@ -509,11 +516,9 @@ const StorefrontInfo = ({ data, subdomain, shareUrl }) => {
             </Box>
           </Box>
           <Text className="store-category">{subtitle}</Text>
-          <Flex className="status-open">
-            <StatusStore status={getOpened(data)} />
-          </Flex>
         </Box>
       </Box>
+      <Box className="store-divider" />
     </Box>
   );
 };

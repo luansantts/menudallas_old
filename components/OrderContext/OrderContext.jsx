@@ -107,6 +107,20 @@ function OrderContext({
   const toast = useToast();
   const router = useRouter();
 
+  // Inicializa o modo de entrega conforme preferência salva na home
+  useEffect(() => {
+    try {
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("orderMode");
+        if (saved === "entrega") {
+          setDelivery("1");
+        } else if (saved === "retirada") {
+          setDelivery("2");
+        }
+      }
+    } catch (_) {}
+  }, []);
+
   useEffect(() => {
     setCupomDesconto(0);
     if (couponsValidar.loading) {
@@ -142,7 +156,9 @@ function OrderContext({
       if (JSON.parse(b).length > 0) {
         let cont = 0;
         JSON.parse(b).forEach((element) => {
-          cont = cont + element.valor_total * element.quantidade;
+          // valor_total já é o total (preço unitário * quantidade)
+          // Não multiplicar por quantidade novamente!
+          cont = cont + element.valor_total;
         });
         setTotal(cont);
       }
@@ -638,7 +654,7 @@ function OrderContext({
                                 )
                               )
                             : moneyFormat.format(0)
-                          : moneyFormat.format(item.valor * item.quantidade)}
+                          : moneyFormat.format(item.valor_total)}
                       </Text>
                       <IconButton
                         aria-label="Remover item"
@@ -755,7 +771,7 @@ function OrderContext({
                           : moneyFormat.format(0)}
                       </Text>
                       <Text fontSize="sm" fontWeight="600" textAlign="right">
-                        {moneyFormat.format(item.valor_total * item.quantidade)}
+                        {moneyFormat.format(item.valor_total)}
                       </Text>
                     </Grid>
                   </Box>
@@ -1442,6 +1458,14 @@ function OrderContext({
               defaultValue={delivery}
               onChange={(e) => {
                 setDelivery(e);
+                try {
+                  if (typeof window !== "undefined") {
+                    localStorage.setItem(
+                      "orderMode",
+                      e === "2" ? "retirada" : "entrega"
+                    );
+                  }
+                } catch (_) {}
                 setOpenTipoEntrega(false);
               }}
             >

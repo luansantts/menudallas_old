@@ -1,0 +1,185 @@
+/* Product Page Styles - Isolated to product page only */
+
+/* Escopo: somente na página de produto */
+.page-product {
+  background: #f9fafb !important; /* gray.50 do Chakra */
+}
+
+/* Card principal - sem card, apenas espaçamento */
+.page-product .product-card,
+.page-product #product-card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Cabeçalho com info da empresa */
+.page-product .product-card__store {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+}
+
+.page-product .store-logo-small {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.page-product .store-name-small {
+  font-size: 12px;
+  color: #9aa3aa;
+  line-height: 1.2;
+}
+
+/* Subir levemente o card principal abaixo da imagem (ajuste fino) */
+.page-product .css-1w6upqj {
+  margin-top: -28px; /* puxa o card para cima */
+}
+
+@media (min-width: 480px) {
+  .page-product .css-1w6upqj {
+    margin-top: -36px; /* um pouco mais em telas maiores */
+  }
+}
+
+.page-product .store-category-small {
+  font-size: 12px;
+  color: #c0c6cc;
+  line-height: 1.2;
+}
+
+/* Título do produto */
+.page-product .product-title-main {
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #1f2933;
+  margin: 8px 0 12px;
+}
+
+/* Preço e stepper */
+.page-product .price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 6px 0 12px;
+}
+
+.page-product .product-price-main {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.page-product .quantity-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-product .stepper-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #eee;
+  background: #fff;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.page-product .stepper-button.primary {
+  background: #f59e0b;
+  color: #fff;
+  border-color: transparent;
+}
+
+.page-product .quantity-display {
+  font-weight: 600;
+}
+
+/* Sobre */
+.page-product .about-section {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.page-product .about-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+/* Remover qualquer estilo de card em todas as telas */
+@media (min-width: 480px) {
+  .page-product .product-card,
+  .page-product #product-card {
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Remover cards grandes - apenas elementos Box principais */
+#product-page .additional-content > div > div {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Manter apenas os espaçamentos internos dos elementos de conteúdo */
+#product-page .additional-content > div {
+  margin-bottom: 24px;
+}
+
+/* Preservar funcionalidade de elementos interativos e badges pequenos */
+#product-page .additional-content button,
+#product-page .additional-content [role="switch"],
+#product-page .additional-content span[class*="chakra-tag"],
+#product-page .additional-content [class*="badge"] {
+  background: inherit !important;
+}
+
+/* Remover padding de containers de card mas manter espaçamento vertical */
+#product-page .additional-content > div > div > div {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Additional Content - sem card, apenas espaçamento */
+#product-page .additional-content {
+  width: 100%;
+  margin: 16px 0 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+@media (min-width: 390px) {
+  #product-page .additional-content {
+    width: 100%;
+    border-radius: 0;
+    padding: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  #product-page .additional-content {
+    width: 100%;
+    border-radius: 0;
+    padding: 0;
+  }
+}

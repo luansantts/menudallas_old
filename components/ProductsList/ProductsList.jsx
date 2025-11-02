@@ -77,6 +77,7 @@ function ProductsList({ data, products, categories }) {
               id={slugify(cat.descricao, { lower: true })}
             >
               <Text
+                className="category-title"
                 fontSize={["18px", "20px"]}
                 fontWeight={700}
                 color="#1A1A1A"
@@ -85,124 +86,125 @@ function ProductsList({ data, products, categories }) {
                 {cat.descricao}
               </Text>
 
-              <Box
-                bg="white"
-                borderRadius="24px"
-                border="1px solid #ECECEC"
-                overflow="hidden"
-              >
+              <Box>
                 {productsData
                   ?.filter((entry) => filterGpProduct(entry, cat))
                   ?.map((product, index, arr) => (
-                    <Flex
-                      key={index}
-                      cursor="pointer"
-                      transition="0.2s ease"
-                      w="100%"
-                      alignItems="center"
-                      py="18px"
-                      px={["14px", "20px"]}
-                      borderBottom={
-                        index !== arr.length - 1 ? "1px solid #F1F5F9" : "none"
-                      }
-                      _hover={{ bg: "rgba(249, 250, 251, 0.65)" }}
-                      onClick={() =>
-                        router.push(
-                          `/produto/${slugify(product.descricao, {
-                            lower: true,
-                          })}?g=${product.id_grupo}&p=${product.id_produto}`
-                        )
-                      }
-                    >
-                      <Box flex="1" pr={["12px", "18px"]}>
-                        <Text
-                          fontSize={["15px", "16px"]}
-                          fontWeight={600}
-                          color="#1F2937"
-                          lineHeight="1.3"
-                        >
-                          {product.descricao}
-                        </Text>
-                        {product.detalhe && (
-                          <Text
-                            fontSize="13px"
-                            color="#6B7280"
-                            noOfLines={2}
-                            mt="6px"
-                          >
-                            {product.detalhe}
-                          </Text>
-                        )}
-
-                        <Flex alignItems="baseline" gap="10px" mt="12px">
-                          {product.tamanhos ? (
-                            <Text fontSize="sm" color="#6B7280">
-                              De{" "}
-                              <Text as="span" fontWeight={600} color="#111827">
-                                {moneyFormat.format(product.valor_de || 0)}
-                              </Text>{" "}
-                              até{" "}
-                              <Text as="span" fontWeight={600} color="#111827">
-                                {moneyFormat.format(product.valor_ate || 0)}
-                              </Text>
-                            </Text>
-                          ) : (
-                            <>
-                              {["P", "O"].indexOf(product.tipo) === -1 && (
-                                <Text
-                                  color="#111827"
-                                  fontWeight={700}
-                                  fontSize="lg"
-                                >
-                                  {product?.em_promocao == false
-                                    ? moneyFormat.format(product?.valor || 0)
-                                    : moneyFormat.format(
-                                        product?.valor_Promocao || 0
-                                      )}
-                                </Text>
-                              )}
-                              {["P", "O"].indexOf(product.tipo) === -1 &&
-                                product?.em_promocao == true && (
-                                  <Text
-                                    textDecoration="line-through"
-                                    color="#9CA3AF"
-                                    fontSize="sm"
-                                  >
-                                    {moneyFormat.format(product?.valor || 0)}
-                                  </Text>
-                                )}
-                            </>
-                          )}
-                        </Flex>
-                      </Box>
-
-                      <Box
-                        w={["72px", "84px"]}
-                        h={["72px", "84px"]}
-                        borderRadius="18px"
-                        overflow="hidden"
-                        bg="#F8FAFC"
-                        flexShrink={0}
+                    <>
+                      <Flex
+                        key={index}
+                        className="product-row"
+                        cursor="pointer"
+                        transition="0.2s ease"
+                        w="100%"
+                        justify="space-between"
+                        align="center"
+                        gap={4}
+                        py="12px"
+                        px={["16px", "20px"]}
+                        bg="transparent"
+                        borderRadius="0"
+                        border="none"
+                        boxShadow="none"
+                        _hover={{ bg: "rgba(249, 250, 251, 0.65)" }}
+                        onClick={() =>
+                          router.push(
+                            `/produto/${slugify(product.descricao, {
+                              lower: true,
+                            })}?g=${product.id_grupo}&p=${product.id_produto}`
+                          )
+                        }
                       >
-                        <Image
-                          className="imgProdList"
-                          src={product.foto_destaque}
-                          width={100}
-                          height={100}
-                          objectFit="cover"
-                          objectPosition="center"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                          alt={product.descricao}
-                          loader={({ src }) => {
-                            return src;
-                          }}
-                        />
-                      </Box>
-                    </Flex>
+                        <Flex
+                          flex="1"
+                          pr={["12px", "18px"]}
+                          direction="column"
+                          justify="space-between"
+                          minH="100px"
+                          minW={0}
+                          className="product-info"
+                        >
+                          <Box>
+                            <Text
+                              className="list-product-title"
+                              as="h3"
+                              fontSize="16px"
+                              lineHeight="22px"
+                              fontWeight="500"
+                              color="gray.800"
+                              letterSpacing="-0.2px"
+                              noOfLines={1}
+                            >
+                              {product.descricao}
+                            </Text>
+
+                            {product.detalhe && (
+                              <Text
+                                className="list-product-subtitle"
+                                fontSize="14px"
+                                lineHeight="20px"
+                                color="#6b7280"
+                                mt="4px"
+                                noOfLines={2}
+                              >
+                                {product.detalhe}
+                              </Text>
+                            )}
+                          </Box>
+
+                          <Text
+                            className="product-price"
+                            fontSize="16px"
+                            fontWeight="600"
+                            color="#222"
+                            mt="8px"
+                            mb="6px"
+                          >
+                            {product.tamanhos
+                              ? moneyFormat.format(product.valor_de || 0)
+                              : ["P", "O"].indexOf(product.tipo) === -1 &&
+                                (product?.em_promocao == false
+                                  ? moneyFormat.format(product?.valor || 0)
+                                  : moneyFormat.format(
+                                      product?.valor_Promocao || 0
+                                    ))}
+                          </Text>
+                        </Flex>
+
+                        <Box
+                          className="product-thumb"
+                          w={["112px", "128px"]}
+                          h={["112px", "128px"]}
+                          borderRadius="24px"
+                          bg="gray.50"
+                          display="grid"
+                          placeItems="center"
+                          overflow="hidden"
+                          flexShrink={0}
+                        >
+                          <Image
+                            className="imgProdList"
+                            src={product.foto_destaque}
+                            width={100}
+                            height={100}
+                            objectFit="contain"
+                            objectPosition="center"
+                            style={{
+                              maxWidth: "100%",
+                              maxHeight: "100%",
+                              objectFit: "contain",
+                            }}
+                            alt={product.descricao}
+                            loader={({ src }) => {
+                              return src;
+                            }}
+                          />
+                        </Box>
+                      </Flex>
+                      {index !== arr.length - 1 && (
+                        <Box className="product-divider" />
+                      )}
+                    </>
                   ))}
               </Box>
             </Box>
