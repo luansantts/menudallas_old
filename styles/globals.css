@@ -181,21 +181,24 @@ a {
 }
 
 .store-name {
-  font-family: "Axiforma", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
   font-weight: 600;
-  font-size: 24px;
-  line-height: 1.2;
+  font-size: 18px;
+  line-height: 27px;
   letter-spacing: -0.01em;
   margin: 0;
   flex: 1;
-  color: #111827;
+  color: #323232;
 }
 
 .store-category {
-  color: #6b7280;
-  font-size: 14px;
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: #323232;
+  opacity: 0.4;
   margin: 0;
-  line-height: 1.2;
 }
 
 .status-open {
@@ -434,16 +437,12 @@ a {
 
 /* ==== NOME DOS PRODUTOS ==== */
 .page-list .list-product-title,
-.list-product-title,
-.page-list h3.list-product-title,
-.menu-card .chakra-text.list-product-title {
-  font-family: "Touche", system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif !important;
-  font-size: 13px !important;
-  font-weight: 500;
-  line-height: 22px;
-  letter-spacing: -0.2px;
-  color: #1f2937; /* cinza escuro elegante */
+.page-list h3.list-product-title {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+  color: #323232 !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -453,31 +452,35 @@ a {
 .category-title,
 .menu-card .chakra-text.css-150a28k,
 .menu-card [data-role="category-title"] {
-  font-family: "TT Hoves Pro", system-ui, -apple-system, "Segoe UI", Roboto,
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif !important;
-  font-weight: 600; /* Demi Bold */
+  font-style: normal !important;
+  font-weight: 600 !important;
   font-size: 14px !important;
+  line-height: 21px !important;
+  color: #323232 !important;
 }
 
 .page-list .list-product-subtitle {
-  font-size: 14px;
-  line-height: 20px;
-  color: #6b7280; /* cinza médio */
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  color: #7e8392 !important;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* até 2 linhas */
-  line-clamp: 2; /* propriedade padrão para compatibilidade */
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* ==== PREÇO DOS PRODUTOS: Novecento Sans Medium 14px ==== */
-.product-price,
-.menu-card .product-price,
-.menu-card .chakra-text.product-price {
+/* ==== PREÇO DOS PRODUTOS: Poppins 14px 600 ==== */
+.page-list .product-price {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif !important;
+  font-weight: 600 !important;
   font-size: 14px !important;
-  font-family: "Novecento Sans", "Novecento Sans Medium", system-ui,
-    -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-  font-weight: 500 !important; /* Medium */
+  line-height: 21px !important;
+  color: #323232 !important;
 }
 
 /* ==== Lista de produtos: título quebra, imagem fixa ==== */
@@ -512,27 +515,6 @@ img.store-logo {
 }
 
 /* ==== /lista → chips (pills) ==== */
-.page-center .menu-card .chakra-button.chip {
-  padding: 10px !important;
-  font-size: 10px !important;
-  line-height: 11px !important;
-  border-radius: 9999px !important;
-  border: 1px solid var(--chip-border, #e2e8f0) !important;
-  background: #fff !important;
-  color: var(--chip-text, #2d3748) !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
-  transition: 0.15s ease !important;
-}
-.page-center .menu-card .menu-chip.chip--active {
-  background: var(--brand-secondary) !important;
-  border-color: var(--brand-secondary) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.24) !important;
-}
-
-.page-center .menu-card .menu-chip.chip--active * {
-  color: #fff !important;
-}
 .page-center .menu-card .keen-slider.chips {
   gap: 1px !important;
 }
@@ -667,8 +649,8 @@ img.store-logo {
 }
 
 .keen-slider.chips {
-  gap: 1px !important;
-  padding: 0 8px !important;
+  gap: 12px !important;
+  padding: 0 20px !important;
 }
 .keen-slider.chips .keen-slider__slide {
   width: auto !important;
@@ -1009,4 +991,484 @@ img.store-logo {
 .md-flavors .btn-confirm {
   background: #cf3f2e;
   color: #fff;
+}
+
+/* ===== /lista — ESTILO FIGMA ===== */
+
+/* Página */
+.page-list.restaurant {
+  max-width: 390px;
+  width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  font-family: var(--font-poppins), system-ui, -apple-system, Segoe UI, Roboto,
+    Arial, sans-serif;
+}
+
+/* Hero com imagem de capa */
+.restaurant-hero {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+.restaurant-hero img,
+.restaurant-hero .hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Card branco que "sobe" sobre o hero */
+.restaurant-card {
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  margin-top: -24px;
+  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04);
+}
+
+/* Bloco de informações da loja */
+.restaurant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+}
+
+/* Topo: logo + nome/categoria + nota */
+.restaurant-info__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.page-list .store-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.page-list img.store-logo {
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 8.571px !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04) inset !important;
+}
+
+.page-list .store-title {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 27px;
+  color: #323232;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.page-list .store-category {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  opacity: 0.4;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: #323232;
+  margin-top: 2px;
+}
+
+/* Badge de avaliação */
+.page-list .rating-badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 10px;
+  width: auto;
+  min-width: 55px;
+  height: 26px;
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 16px;
+  background: transparent;
+  flex: 0 0 auto;
+}
+.page-list .rating-badge .star {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  color: #ffb100;
+  fill: #ffb100;
+  stroke: #ffb100;
+}
+.page-list .rating-badge .score {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  color: #323232;
+}
+
+/* Status (relógio + "Aberto") */
+.page-list .store-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #00b969;
+  padding-left: 20px;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 18px;
+}
+.page-list .store-status .clock {
+  width: 16px;
+  height: 16px;
+  border: 1.33px solid #00b969;
+  border-radius: 50%;
+}
+
+/* Divisor fino */
+.page-list .divider {
+  height: 1px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Categorias (chips) ===== */
+/* Chip ativo ("Lançamentos") – amarelo */
+.page-list .chip--active,
+.page-list .menu-chip.chip--active {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 32px !important;
+  padding: 7px 16px !important;
+  background: #ffb100 !important;
+  border: none !important;
+  border-radius: 104px !important;
+  box-shadow: none !important;
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  text-align: center !important;
+  color: #ffffff !important;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+}
+
+.page-list .chip--active .label,
+.page-list .menu-chip.chip--active .label,
+.page-list .chip--active *,
+.page-list .menu-chip.chip--active * {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  text-align: center !important;
+  color: #ffffff !important;
+}
+
+/* Chips inativos (borda cinza, texto #7E8392) */
+.page-list .chip,
+.page-list .menu-chip {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 32px !important;
+  padding: 7px 16px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 71px !important;
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  text-align: center !important;
+  color: #7e8392 !important;
+  white-space: nowrap !important;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+}
+
+.page-list .chip .label,
+.page-list .menu-chip .label,
+.page-list .chip *,
+.page-list .menu-chip * {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  text-align: center !important;
+  color: #7e8392 !important;
+  height: 18px !important;
+}
+
+/* Estados hover/focus (sem mudança de cor no ativo) */
+.page-list .chip--active:hover,
+.page-list .menu-chip.chip--active:hover,
+.page-list .chip--active:focus,
+.page-list .menu-chip.chip--active:focus {
+  background: #ffb100 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.page-list .chip:hover,
+.page-list .menu-chip:hover {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #7e8392 !important;
+}
+
+/* ===== Lista de produtos ===== */
+.page-list .product-section {
+  padding: 0 0 8px;
+}
+
+.page-list .section-title {
+  padding: 0 20px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  color: #323232;
+  margin-bottom: 12px;
+}
+
+.page-list .product-row {
+  box-sizing: border-box !important;
+  padding: 12px 0px !important;
+  gap: 10px !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.page-list .product-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 208px;
+}
+
+.page-list .product-info__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.page-list .product-title {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: #323232;
+}
+
+.page-list .product-desc {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: #7e8392;
+  max-height: 36px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.page-list .product-price {
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  color: #323232;
+}
+
+.page-list .product-thumb {
+  width: 82px !important;
+  height: 82px !important;
+  border-radius: 9.23944px !important;
+  object-fit: cover;
+  background: rgba(0, 0, 0, 0.08);
+  flex: 0 0 auto !important;
+  overflow: hidden;
+}
+
+.page-list .product-thumb img,
+.page-list .imgProdList {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ===== Header de ações sobre o hero (botões redondos) */
+.page-list .top-actions {
+  position: absolute;
+  inset: 0 0 auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 20px 0;
+}
+.page-list .top-actions .icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsividade básica */
+@media (max-width: 360px) {
+  .page-list .rating-badge {
+    padding: 4px 8px;
+  }
+  .page-list .product-thumb {
+    width: 72px;
+    height: 72px;
+  }
+  .page-list .product-info {
+    width: calc(100% - 90px);
+  }
+}
+
+/* ==========================================
+   ESTILOS DA PÁGINA DO PRODUTO (FIGMA)
+   ========================================== */
+
+:root {
+  --color-text: #323232;
+  --color-muted: #7e8392;
+  --color-white: #ffffff;
+}
+
+/* Aplicar Poppins em toda a página de produto */
+#product-page,
+#product-page * {
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif !important;
+}
+
+/* ====== HEADER DA PÁGINA ====== */
+/* Hero image - garantir object-fit e centralização */
+#product-page img[alt*="Produto"] {
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+/* ====== LINHA DA LOJA (logo + nome) ====== */
+/* Logo da loja - 16x16 circular */
+#product-page img[alt*="Logo da loja"] {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50px !important;
+}
+
+/* Nome do estabelecimento - 12px Poppins 400, cor #323232, opacity 0.4 */
+#product-page .chakra-text[fontSize="sm"][color="gray.500"] {
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  color: #323232 !important;
+  opacity: 0.4 !important;
+}
+
+/* ====== NOME DO PRODUTO ====== */
+/* Título do produto - 16px Poppins 600, cor #323232 */
+#product-page .chakra-text[fontWeight="bold"][fontSize="xl"][color="#212121"] {
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  line-height: 24px !important;
+  color: #323232 !important;
+}
+
+/* ====== PREÇO ====== */
+/* Preço principal - 20px Poppins 600, cor #323232 */
+#product-page .chakra-text[fontWeight="bold"][fontSize="lg"][color="#212121"] {
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 20px !important;
+  line-height: 30px !important;
+  color: #323232 !important;
+}
+
+/* Botões de quantidade - border-radius 10px */
+#product-page .chakra-box[w="36px"][h="36px"] {
+  border-radius: 10px !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 8px !important;
+}
+
+/* Botão de incrementar quantidade - vermelho */
+#product-page .chakra-box[w="36px"][h="36px"][bg="#f59e0b"],
+#product-page .chakra-box[bg="#f59e0b"] {
+  background: #d52b1e !important;
+  border: none !important;
+}
+
+/* Container de preço + quantidade - gap 10px */
+#product-page .chakra-flex[justify="space-between"][align="center"][my="4"] {
+  gap: 10px !important;
+}
+
+/* Container de quantidade - gap 8px */
+#product-page .chakra-flex[align="center"][gap="2"] {
+  gap: 8px !important;
+}
+
+/* ====== SEÇÃO "SOBRE" ====== */
+/* Título "Sobre" - 14px Poppins 600, cor #323232 */
+#product-page
+  .chakra-box
+  .chakra-text[fontWeight="bold"][fontSize="md"][color="#212121"] {
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  line-height: 21px !important;
+  color: #323232 !important;
+}
+
+/* Texto de descrição - 14px Poppins 400, cor #7E8392 */
+#product-page .chakra-text[fontSize="sm"][color="gray.600"] {
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  line-height: 21px !important;
+  color: #7e8392 !important;
+}
+
+/* ====== SEÇÃO "INGREDIENTES" ====== */
+/* Título "Ingredientes" - 14px Poppins 600, cor #323232 */
+#product-page .chakra-text[fontWeight="bold"][fontSize="md"] {
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  line-height: 21px !important;
+  color: #323232 !important;
+}
+
+/* Lista de ingredientes - 14px Poppins 400, cor #7E8392 */
+#product-page .chakra-unordered-list,
+#product-page .chakra-list__item {
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  line-height: 21px !important;
+  color: #7e8392 !important;
 }

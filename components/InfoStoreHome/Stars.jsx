@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Skeleton, Text } from "@chakra-ui/react";
+import { Icon, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { BsFillStarFill } from "react-icons/bs";
 import { connect } from "react-redux";
@@ -40,17 +40,11 @@ function Stars({ avaliacoes, getAll, data, subdomain }) {
     }
   }, [avaliacoes]);
 
-  if (isLoading) {
-    return <Skeleton w="30px" h="20px" />;
-  }
-
   return (
-    <Flex alignItems="center" gap="4px">
-      <Icon as={BsFillStarFill} fontSize="xs" fill="#FEAD1D" />
-      <Text fontSize="xs" color="#FEAD1D" fontWeight={600}>
-        {handleTotalStar(avaliacoesData)}
-      </Text>
-    </Flex>
+    <>
+      <Icon as={BsFillStarFill} className="star" />
+      <Text className="score">{handleTotalStar(avaliacoesData)}</Text>
+    </>
   );
 }
 

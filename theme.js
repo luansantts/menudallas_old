@@ -1,36 +1,38 @@
-import { extendTheme } from '@chakra-ui/react';
-import 'typeface-roboto';
+import { extendTheme } from "@chakra-ui/react";
+import "typeface-roboto";
 
 const config = {
-  initialColorMode: 'light',
-  useSystemColorMode: false
+  initialColorMode: "light",
+  useSystemColorMode: false,
 };
 
 const theme = extendTheme({
   components: {
     Button: {
       baseStyle: {
-        borderRadius: 'base'
+        borderRadius: "base",
       },
       variants: {
-        'btnDallas': {
-          bg: 'linear-gradient(140deg, #1E90FF 0%, #1577BE 100%)',
+        btnDallas: {
+          bg: "linear-gradient(140deg, #1E90FF 0%, #1577BE 100%)",
           _hover: {
-            background: 'linear-gradient(140deg, #1E90FF 0%, #1577BE 100%)',
-            opacity: 1
-          }
-        }
-      }
+            background: "linear-gradient(140deg, #1E90FF 0%, #1577BE 100%)",
+            opacity: 1,
+          },
+        },
+      },
     },
     Th: {
       baseStyle: {
-        fontWeight: '400'
-      }
-    }
+        fontWeight: "400",
+      },
+    },
   },
   config,
   fonts: {
-    body: 'Roboto, sans-serif'
+    heading:
+      'var(--font-poppins), system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif',
+    body: 'var(--font-poppins), system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif',
   },
   styles: {
     global: () => ({
@@ -40,9 +42,9 @@ const theme = extendTheme({
     }),
   },
   colors: {
-    'primary': '#1E90FF',
-    'secondary': '#1577BE'
-  }
+    primary: "#1E90FF",
+    secondary: "#1577BE",
+  },
 });
 
 export default theme;
