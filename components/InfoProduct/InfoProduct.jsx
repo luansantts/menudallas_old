@@ -37,8 +37,6 @@ import { connect } from "react-redux";
 import { saboresActions } from "../../store/actions";
 import { Loading } from "../Loading";
 import { FiCheck, FiSearch, FiInfo } from "react-icons/fi";
-import { BsPlusLg } from "react-icons/bs";
-import { GrSubtract } from "react-icons/gr";
 import { MdClose } from "react-icons/md";
 import { FooterProduct } from "../FooterProduct";
 import { addCart } from "../../utils/addCart";
@@ -584,46 +582,72 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
         </Text>
 
         {/* Price Row */}
-        <Flex justify="space-between" align="center" my={4}>
+        <Flex className="priceRow" align="center" my={4}>
           <Text fontWeight="bold" fontSize="lg" color="#212121">
             {moneyFormat.format(totalUnity || 0)}
           </Text>
 
           {/* Quantity Stepper */}
-          <Flex align="center" gap={2}>
+          <Box className="quantity" role="group" aria-label="Quantidade">
             <Box
-              w="36px"
-              h="36px"
-              borderRadius="12px"
-              border="1px solid #E5E7EB"
-              bg="white"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              cursor="pointer"
+              as="button"
+              type="button"
+              className="qty-btn qty-btn--minus"
+              aria-label="Diminuir"
               onClick={handleDecreaseCount}
-              aria-label="diminuir"
             >
-              <Icon as={GrSubtract} fontSize="18px" color="#6B7280" />
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="31"
+                  height="31"
+                  rx="9.5"
+                  stroke="#EEEEEE"
+                />
+                <path
+                  d="M18 20L14 16L18 12"
+                  stroke="#323232"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </Box>
-            <Text fontWeight={600} fontSize="lg" minW="24px" textAlign="center">
-              {count}
-            </Text>
+
+            <Text className="qty-value">{count}</Text>
+
             <Box
-              w="36px"
-              h="36px"
-              borderRadius="12px"
-              bg="#f59e0b"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              cursor="pointer"
+              as="button"
+              type="button"
+              className="qty-btn qty-btn--plus"
+              aria-label="Aumentar"
               onClick={handleIncreaseCount}
-              aria-label="aumentar"
             >
-              <Icon as={BsPlusLg} fontSize="18px" color="white" />
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="32" height="32" rx="10" fill="#D52B1E" />
+                <path
+                  d="M14 20L18 16L14 12"
+                  stroke="white"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </Box>
-          </Flex>
+          </Box>
         </Flex>
 
         {/* About Section */}

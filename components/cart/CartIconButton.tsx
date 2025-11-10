@@ -1,8 +1,6 @@
 import { IconButton, IconButtonProps } from "@chakra-ui/react";
-import BagSquareIcon from "../icons/BagSquareIcon";
 
-const BTN_SIZE = 44; // tamanho do botão (igual nas duas páginas)
-const ICON_SIZE = 20; // tamanho do ícone (igual nas duas páginas)
+const BTN_SIZE = 44;
 
 export default function CartIconButton(
   props: Omit<IconButtonProps, "icon" | "aria-label">
@@ -10,7 +8,6 @@ export default function CartIconButton(
   return (
     <IconButton
       aria-label="Abrir sacola"
-      icon={<BagSquareIcon size={ICON_SIZE} />}
       w={`${BTN_SIZE}px`}
       h={`${BTN_SIZE}px`}
       minW={`${BTN_SIZE}px`}
@@ -24,6 +21,14 @@ export default function CartIconButton(
       _hover={{ bg: "gray.50" }}
       _active={{ bg: "gray.100" }}
       {...props}
-    />
+    >
+      <img
+        src="/img/bag-icon.svg"
+        alt="Abrir sacola"
+        width={20}
+        height={20}
+        style={{ display: "block" }}
+      />
+    </IconButton>
   );
 }

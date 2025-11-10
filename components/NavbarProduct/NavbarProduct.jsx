@@ -1,7 +1,6 @@
-import { Box, Flex, Icon, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
-import { MdOutlineWest } from "react-icons/md";
 import CartIconButton from "../cart/CartIconButton";
 
 function NavbarProduct({ productData, onOpenCart }) {
@@ -24,9 +23,10 @@ function NavbarProduct({ productData, onOpenCart }) {
           <Box
             as="a"
             pointerEvents="auto"
-            w={["44px", "52px"]}
-            h={["44px", "52px"]}
-            borderRadius="full"
+            w="40px"
+            h="40px"
+            p="10px"
+            borderRadius="100px"
             bg="white"
             display="flex"
             alignItems="center"
@@ -35,7 +35,15 @@ function NavbarProduct({ productData, onOpenCart }) {
             _hover={{ transform: "scale(1.05)" }}
             transition="transform 0.2s ease"
           >
-            <Icon fontSize="22px" as={MdOutlineWest} color="#0D0D0D" />
+            <img
+              src="/icons/chevron-left.svg"
+              alt="Voltar"
+              width={20}
+              height={20}
+              aria-hidden="true"
+              draggable={false}
+              style={{ width: 20, height: 20, minWidth: 20, minHeight: 20 }}
+            />
           </Box>
         </Link>
 

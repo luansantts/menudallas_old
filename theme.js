@@ -11,6 +11,9 @@ const theme = extendTheme({
     Button: {
       baseStyle: {
         borderRadius: "base",
+        _focusVisible: {
+          boxShadow: "none",
+        },
       },
       variants: {
         btnDallas: {
@@ -18,6 +21,30 @@ const theme = extendTheme({
           _hover: {
             background: "linear-gradient(140deg, #1E90FF 0%, #1577BE 100%)",
             opacity: 1,
+          },
+        },
+      },
+    },
+    IconButton: {
+      baseStyle: {
+        _focusVisible: {
+          boxShadow: "none",
+        },
+      },
+    },
+    Link: {
+      baseStyle: {
+        _focusVisible: {
+          boxShadow: "none",
+        },
+      },
+    },
+    Input: {
+      baseStyle: {
+        field: {
+          _focusVisible: {
+            boxShadow: "none",
+            borderColor: "inherit",
           },
         },
       },
@@ -39,7 +66,18 @@ const theme = extendTheme({
       body: {
         bg: "#FBFBFB",
       },
+      "*, *::before, *::after": {
+        WebkitTapHighlightColor: "transparent",
+      },
+      "button:focus:not(:focus-visible), [role='button']:focus:not(:focus-visible), a:focus:not(:focus-visible), input:focus:not(:focus-visible), [tabindex]:focus:not(:focus-visible)":
+        {
+          outline: "none !important",
+          boxShadow: "none !important",
+        },
     }),
+  },
+  shadows: {
+    outline: "0 0 0 0 rgba(0,0,0,0)",
   },
   colors: {
     primary: "#1E90FF",

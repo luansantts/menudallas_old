@@ -25,7 +25,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { BsFillChatDotsFill } from "react-icons/bs";
-import { FiArrowLeft, FiMenu, FiSearch } from "react-icons/fi";
+import { FiMenu, FiSearch } from "react-icons/fi";
 import { MdHome, MdPercent, MdPerson } from "react-icons/md";
 import { FooterStore } from "../FooterStore";
 import BagSquareIcon from "../icons/BagSquareIcon";
@@ -55,16 +55,28 @@ function Navbar({
         <Flex alignItems="center" justifyContent="space-between">
           <IconButton
             aria-label="Voltar"
-            icon={<FiArrowLeft />}
             onClick={() => router.back()}
-            borderRadius="full"
+            w="40px"
+            h="40px"
+            p="10px"
+            borderRadius="100px"
             bg="white"
-            color="gray.700"
             boxShadow="0px 10px 30px rgba(15, 23, 42, 0.18)"
-            w="48px"
-            h="48px"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
             _hover={{ bg: "white", transform: "scale(0.98)" }}
-          />
+          >
+            <img
+              src="/icons/chevron-left.svg"
+              alt="Voltar"
+              width={20}
+              height={20}
+              aria-hidden="true"
+              draggable={false}
+              style={{ width: 20, height: 20, minWidth: 20, minHeight: 20 }}
+            />
+          </IconButton>
           <FooterStore data={data} subdomain={subdomain} variant="floating" />
         </Flex>
       </Box>

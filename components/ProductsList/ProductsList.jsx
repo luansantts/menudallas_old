@@ -173,26 +173,29 @@ function ProductsList({ data, products, categories }) {
 
                         <Box
                           className="product-thumb"
-                          w={["112px", "128px"]}
-                          h={["112px", "128px"]}
-                          borderRadius="24px"
-                          bg="gray.50"
-                          display="grid"
-                          placeItems="center"
+                          w="82px"
+                          h="82px"
+                          borderRadius="9.23944px"
+                          bg="rgba(0, 0, 0, 0.08)"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
                           overflow="hidden"
                           flexShrink={0}
+                          flexGrow={0}
+                          position="relative"
                         >
                           <Image
                             className="imgProdList"
                             src={product.foto_destaque}
-                            width={100}
-                            height={100}
-                            objectFit="contain"
-                            objectPosition="center"
+                            width={82}
+                            height={82}
                             style={{
-                              maxWidth: "100%",
-                              maxHeight: "100%",
+                              width: "100%",
+                              height: "100%",
                               objectFit: "contain",
+                              objectPosition: "center",
+                              display: "block",
                             }}
                             alt={product.descricao}
                             loader={({ src }) => {

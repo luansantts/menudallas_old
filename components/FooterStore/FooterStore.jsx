@@ -139,23 +139,26 @@ function FooterStore({ data, subdomain, variant = "default" }) {
           transition="0.2s ease"
           opacity={opened ? 1 : 0.8}
         />
-        <Flex
-          top={["-4px", "-6px"]}
-          right={["-6px", "-8px"]}
-          position="absolute"
-          borderRadius="full"
-          bg={hasItems ? data?.primary_color || "#FEAD1D" : "#C5CAD8"}
-          color="white"
-          minW="22px"
-          h="22px"
-          fontSize="12px"
-          fontWeight={700}
-          alignItems="center"
-          justifyContent="center"
-          border="2px solid white"
-        >
-          {bag.length}
-        </Flex>
+        {bag.length > 0 && (
+          <Flex
+            top={["-4px", "-6px"]}
+            right={["-6px", "-8px"]}
+            position="absolute"
+            borderRadius="full"
+            bg={data?.primary_color || "#FEAD1D"}
+            color="white"
+            minW="22px"
+            h="22px"
+            fontSize="12px"
+            fontWeight={700}
+            alignItems="center"
+            justifyContent="center"
+            border="2px solid white"
+            aria-live="polite"
+          >
+            {bag.length}
+          </Flex>
+        )}
       </Box>
 
       {/* Cart Modal */}
