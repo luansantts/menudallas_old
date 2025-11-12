@@ -36,7 +36,7 @@ import { moneyFormat } from "../../utils/moneyFormat";
 import { connect } from "react-redux";
 import { saboresActions } from "../../store/actions";
 import { Loading } from "../Loading";
-import { FiCheck, FiSearch, FiInfo } from "react-icons/fi";
+import { FiCheck, FiSearch, FiInfo, FiChevronDown } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
 import { FooterProduct } from "../FooterProduct";
 import { addCart } from "../../utils/addCart";
@@ -67,6 +67,7 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
   const [isLoading, setIsLoading] = useState(false);
   const [searchFlavors, setSearchFlavors] = useState(false);
   const [searchTermFlavor, setSearchTermFlavor] = useState("");
+  const [expandedGroups, setExpandedGroups] = useState({});
   const {
     isOpen: isCartOpen,
     onOpen: onCartOpen,
@@ -323,6 +324,8 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
               ? dt.valor_Promocao
               : 0,
           valor_total: totalUnity,
+          // Corrige: salvar o total da linha (preço unitário × quantidade)
+          valor_total: totalUnity * count,
           observacao_item: observacaoItem,
           foto_destaque: dt.foto_destaque,
           id_grupo: dt.id_grupo,
@@ -556,7 +559,7 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
         maxW={{ base: "100%", md: "600px" }}
         mx={{ base: 0, md: "auto" }}
         px={4}
-        pb={4}
+        pb="120px"
       >
         {/* Store Info Header */}
         <Flex align="center" gap={3} mb={2}>
@@ -727,9 +730,7 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
               )} */}
             </Box>
 
-            {(dt.tag || isRangeProduct || hasPromotion || count > 1) && (
-              <Divider />
-            )}
+            {/* Removido o Divider para evitar a linha extra ao adicionar item */}
 
             {gpTamanhos.length > 0 && (
               <Box
@@ -740,52 +741,29 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                 mt={4}
               >
                 <Flex
-                  flexWrap={["wrap", "nowrap"]}
                   w="100%"
                   p={0}
                   alignItems="center"
                   justifyContent="space-between"
                   bg="transparent"
-                  borderBottom="none"
-                  mb={3}
+                  borderBottom="1px solid #E5E7EB"
+                  mb={2}
+                  pb={2}
                 >
-                  <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
-                    <Text fontSize="lg" fontWeight={700}>
-                      Escolha o tamanho
-                    </Text>
-                    <Text fontSize="sm" color="#6B7280">
-                      Escolha no mínimo 1 opção
-                    </Text>
-                  </Box>
-
-                  <Flex
-                    w={["100%", "auto"]}
-                    justifyContent={["center", "flex-end"]}
-                    mt={["16px", "0"]}
-                    gap="12px"
+                  <Text fontSize="14px" fontWeight={700} color="#111827" textTransform="uppercase" fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
+                    Tamanho
+                  </Text>
+                  <Box
+                    bg="#F3F4F6"
+                    borderRadius="999px"
+                    px="14px"
+                    py="6px"
+                    fontSize="12px"
+                    fontWeight={600}
+                    color="#323232"
                   >
-                    <Box
-                      bg={data?.primary_color || "#F59E0B"}
-                      borderRadius="full"
-                      padding="10px 22px"
-                      fontSize="14px"
-                      fontWeight={700}
-                      color="#fff"
-                    >
-                      {!isEmpty(lengthObject) ? 1 : 0} / 1
-                    </Box>
-
-                    <Box
-                      bg="#4B5563"
-                      borderRadius="full"
-                      padding="10px 22px"
-                      fontSize="12px"
-                      fontWeight={700}
-                      color="#FFF"
-                    >
-                      Obrigatório
-                    </Box>
-                  </Flex>
+                    Obrigatório
+                  </Box>
                 </Flex>
 
                 {gpTamanhos.map((tam, index) => (
@@ -804,11 +782,18 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                     flexWrap="wrap"
                   >
                     <Box>
-                      <Text fontSize="md" fontWeight={700}>
+                      <Text
+                        fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                        fontSize="16px"
+                        fontWeight={700}
+                        color="#111827"
+                        display="inline"
+                        mr="6px"
+                      >
                         {tam?.tamanho}
                       </Text>
-                      <Text fontSize="sm" color="#6B7280">
-                        Até {tam?.qtd_sabor} sabores
+                      <Text as="span" fontSize="12px" color="#6B7280">
+                        (Até {tam?.qtd_sabor} {tam?.qtd_sabor === 1 ? "sabor" : "sabores"})
                       </Text>
                     </Box>
 
@@ -900,107 +885,72 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                           <Flex
                             flexWrap={["wrap", "initial"]}
                             w="100%"
-                            p="25px"
+                            p="20px 25px 0"
+                            alignItems="center"
+                            justifyContent="space-between"
                           >
-                            <Box
-                              textAlign={["center", "initial"]}
-                              w={["100%", "60%"]}
-                            >
+                            <Box>
                               <Text
-                                fontSize="16px"
-                                fontWeight={600}
+                                fontSize="14px"
+                                fontWeight={700}
+                                color="#111827"
                                 textTransform="uppercase"
+                                fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
                               >
                                 Sabores disponíveis para esse tamanho
                               </Text>
-                              <Text fontSize="14px" fontWeight={400}>
+                              <Text fontSize="12px" color="#6B7280" fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
                                 Escolha no mínimo 1 opção
                               </Text>
                             </Box>
 
                             <Flex
-                              w={["40%", "40%"]}
-                              justifyContent={["center", "initial"]}
-                              w={["100%", "initial"]}
-                              mt={["15px", ""]}
+                              w={["100%", "auto"]}
+                              justifyContent={["flex-start", "flex-end"]}
+                              mt={["12px", "0"]}
+                              gap="12px"
                             >
                               <Box
                                 bg={data?.primary_color}
                                 borderRadius="5px"
-                                padding="10px 18px"
-                                fontSize={["14px", "16px"]}
+                                padding="8px 14px"
+                                fontSize="12px"
                                 fontWeight={600}
                                 color="#fff"
                               >
-                                {flavorsSelected.length} /{" "}
-                                {lengthObject.qtd_sabor}
+                                {flavorsSelected.length} / {lengthObject.qtd_sabor}
                               </Box>
 
                               <Box
-                                ml="16px"
-                                bg="#4B5563"
-                                borderRadius="5px"
-                                padding="12px 20px"
-                                fontSize={["12px", "14px"]}
+                                bg="#F3F4F6"
+                                borderRadius="999px"
+                                padding="8px 14px"
+                                fontSize="12px"
                                 fontWeight={600}
-                                color="#FFF"
+                                color="#323232"
                               >
                                 Obrigatório
                               </Box>
                             </Flex>
                           </Flex>
 
-                          <Box p="0px 25px" overflowY="auto" maxH="650px">
-                            <Box
-                              border="1px solid #CECECE"
-                              borderRadius="22px 22px 0px 0px"
-                            >
-                              <Box
-                                bg="#DDD"
-                                w="100%"
-                                p="25px"
-                                alignItems="center"
-                                justifyContent="space-between"
-                                borderRadius="22px 22px 0px 0px"
+                          <Box p="10px 25px 25px" overflowY="auto" maxH="650px">
+                            <Box>
+                              <Text
+                                fontSize="14px"
+                                fontWeight={700}
+                                color="#111827"
+                                textTransform="uppercase"
+                                fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
                               >
-                                <Box
-                                  textAlign={["center", "initial"]}
-                                  w={["100%", "60%"]}
-                                >
-                                  <Text
-                                    fontSize="16px"
-                                    fontWeight={600}
-                                    textTransform="uppercase"
-                                  >
-                                    Faça sua escolha de sabores
-                                  </Text>
-                                  <Text fontSize="14px" fontWeight={400}>
-                                    Escolha até {lengthObject.qtd_sabor} opç
-                                    {lengthObject.qtd_sabor > 1 ? "ões" : "ão"}
-                                  </Text>
-                                </Box>
+                                Faça sua escolha de sabores
+                              </Text>
+                              <Text fontSize="12px" color="#6B7280" mb="10px" fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
+                                Escolha até {lengthObject.qtd_sabor} opç
+                                {lengthObject.qtd_sabor > 1 ? "ões" : "ão"}
+                              </Text>
 
-                                <Flex
-                                  w={["40%", "40%"]}
-                                  justifyContent={["center", "initial"]}
-                                  w={["100%", "initial"]}
-                                  mt={["15px", ""]}
-                                >
-                                  <Box
-                                    bg={data?.primary_color}
-                                    borderRadius="5px"
-                                    padding="10px 18px"
-                                    fontSize={["14px", "16px"]}
-                                    fontWeight={600}
-                                    color="#fff"
-                                  >
-                                    {flavorsSelected.length} /{" "}
-                                    {lengthObject.qtd_sabor}
-                                  </Box>
-                                </Flex>
-                              </Box>
-
-                              <VStack spacing="10px" p="0 25px 25px" w="100%">
+                              <VStack spacing="10px" p="0" w="100%">
                                 {flavorsFilters.map((sab, index) => {
                                   const isSelected =
                                     flavorsSelected.filter(
@@ -1027,10 +977,11 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                                       >
                                         <Box>
                                           <Text
-                                            fontWeight={700}
+                                            fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                                            fontWeight={400}
                                             color="gray.900"
-                                            fontSize="15px"
-                                            lineHeight="20px"
+                                            fontSize="12px"
+                                            lineHeight="18px"
                                           >
                                             {sab?.descricao}
                                           </Text>
@@ -1038,9 +989,10 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
 
                                         <Flex align="center" gap="12px">
                                           <Text
-                                            fontWeight={700}
+                                            fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                                            fontWeight={600}
                                             color="gray.800"
-                                            fontSize="15px"
+                                            fontSize="md"
                                           >
                                             {moneyFormat.format(sab?.valor)}
                                           </Text>
@@ -1321,112 +1273,41 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                   justifyContent="space-between"
                   bg="#FDFDFD"
                 >
-                  <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
-                    <Text fontSize="lg" fontWeight={700}>
-                      Ingredientes extras e adicionais
-                    </Text>
-                    <Text fontSize="sm" color="#6B7280">
-                      Escolha no mínimo{" "}
-                      {productDetail.length > 0 &&
-                        Object.values(productDetail[0])[0][0]?.qtd_minimo}{" "}
-                      opções
-                    </Text>
-                  </Box>
-
-                  <Flex
-                    w={["100%", "auto"]}
-                    justifyContent={["center", "flex-end"]}
-                    mt={["16px", "0"]}
-                  >
-                    <Box
-                      bg={data?.primary_color || "#F59E0B"}
-                      borderRadius="full"
-                      padding="10px 22px"
-                      fontSize="14px"
-                      fontWeight={700}
-                      color="#fff"
-                    >
-                      {productDetail.length > 0
-                        ? Object.values(productDetail[0])[0][0]?.selected_index
-                            .length
-                        : 0}
-                      /
-                      {productDetail.length > 0 &&
-                        Object.values(productDetail[0])[0][0]?.qtd_maximo}
-                    </Box>
-                  </Flex>
+                  <Text fontSize="14px" fontWeight={700} color="#111827" textTransform="uppercase" fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
+                    Ingredientes extras e adicionais
+                  </Text>
                 </Flex>
 
                 {productDetail.map((detail, index) => {
                   var detailTwo = detail[Object.keys(detail)[0]];
 
-                  return detailTwo.map((item, itemIndex) => (
-                    <Box key={itemIndex} borderTop="1px solid #EEF2F7">
-                      <Flex
-                        flexWrap={["wrap", "initial"]}
-                        w="100%"
-                        p={["20px", "28px"]}
-                        alignItems="center"
-                        justifyContent="space-between"
-                        bg="#FFFFFF"
-                      >
-                        <Box
-                          textAlign={["center", "initial"]}
-                          w={["100%", "60%"]}
+                  return detailTwo.map((item, itemIndex) => {
+                    const groupKey = `detail-${index}-${itemIndex}`;
+                    const isOpen = expandedGroups[groupKey] === true;
+                    return (
+                      <Box key={itemIndex} borderTop="1px solid #EEF2F7">
+                        <Flex
+                          w="100%"
+                          p={["16px", "20px"]}
+                          alignItems="center"
+                          justifyContent="space-between"
+                          bg="#FFFFFF"
+                          borderBottom="1px solid #E5E7EB"
+                          cursor="pointer"
+                          onClick={() =>
+                            setExpandedGroups((prev) => ({
+                              ...prev,
+                              [groupKey]: !isOpen,
+                            }))
+                          }
                         >
-                          <Text fontSize="md" fontWeight={700}>
+                          <Text fontSize="14px" fontWeight={700} textTransform="uppercase" fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
                             {item?.descricao}
                           </Text>
-                          <Text fontSize="sm" color="#6B7280">
-                            Escolha no mínimo {item?.qtd_minimo} opç
-                            {item.qtd_minimo > 1 ? "ões" : "ão"}
-                          </Text>
-                        </Box>
-
-                        <Flex
-                          w={["100%", "auto"]}
-                          justifyContent={["center", "flex-end"]}
-                          mt={["16px", "0"]}
-                          gap="12px"
-                        >
-                          <Box
-                            bg={data?.primary_color || "#F59E0B"}
-                            borderRadius="full"
-                            padding="10px 22px"
-                            fontSize="14px"
-                            fontWeight={700}
-                            color="#fff"
-                          >
-                            {item.selected_index.length} / {item.qtd_maximo}
-                          </Box>
-
-                          {item.obrigatorio === "N" ? (
-                            <Box
-                              bg="#E7F8E7"
-                              borderRadius="full"
-                              padding="10px 22px"
-                              fontSize="12px"
-                              fontWeight={700}
-                              color="#50A773"
-                            >
-                              Opcional
-                            </Box>
-                          ) : (
-                            <Box
-                              bg="#4B5563"
-                              borderRadius="full"
-                              padding="10px 22px"
-                              fontSize="12px"
-                              fontWeight={700}
-                              color="#FFF"
-                            >
-                              Obrigatório
-                            </Box>
-                          )}
+                          <Icon as={FiChevronDown} transform={isOpen ? "rotate(180deg)" : "rotate(0deg)"} transition="transform .2s ease" />
                         </Flex>
-                      </Flex>
 
-                      {item.adicionais.map((add, addIndex) => (
+                        {isOpen && item.adicionais.map((add, addIndex) => (
                         <Flex
                           key={add.id}
                           w="100%"
@@ -1440,13 +1321,13 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                           }
                         >
                           <Box textAlign="left">
-                            <Text fontSize="md" fontWeight={600}>
+                            <Text fontSize="14px" fontWeight={600}>
                               {add.descricao}
                             </Text>
                           </Box>
 
                           <HStack spacing="12px" align="center">
-                            <Text fontSize="md" fontWeight={600}>
+                            <Text fontSize="14px" fontWeight={600}>
                               {moneyFormat.format(add.valor)}
                             </Text>
 
@@ -1487,16 +1368,20 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                             />
                           </HStack>
                         </Flex>
-                      ))}
-                    </Box>
-                  ));
+                        ))}
+                      </Box>
+                    );
+                  });
                 })}
               </Box>
             )}
 
             {gpAdicionais.length > 0 && (
               <Stack spacing={6}>
-                {gpAdicionais.map((item, itemIndex) => (
+                {gpAdicionais.map((item, itemIndex) => {
+                  const groupKey = `adc-${itemIndex}`;
+                  const isOpen = expandedGroups[groupKey] === true;
+                  return (
                   <Box
                     key={itemIndex}
                     bg="transparent"
@@ -1506,67 +1391,29 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                     mt={4}
                   >
                     <Flex
-                      flexWrap={["wrap", "initial"]}
                       w="100%"
                       p={0}
                       alignItems="center"
                       justifyContent="space-between"
                       bg="transparent"
-                      mb={3}
+                      mb={2}
+                      pb={2}
+                      borderBottom="1px solid #E5E7EB"
+                      cursor="pointer"
+                      onClick={() =>
+                        setExpandedGroups((prev) => ({
+                          ...prev,
+                          [groupKey]: !isOpen,
+                        }))
+                      }
                     >
-                      <Box
-                        textAlign={["center", "initial"]}
-                        w={["100%", "60%"]}
-                      >
-                        <Text fontSize="md" fontWeight={700}>
-                          {item.descricao}
-                        </Text>
-                      </Box>
-
-                      <Flex
-                        w={["100%", "auto"]}
-                        justifyContent={["center", "flex-end"]}
-                        mt={["16px", "0"]}
-                        gap="12px"
-                      >
-                        <Box
-                          bg={data?.primary_color || "#F59E0B"}
-                          borderRadius="full"
-                          padding="10px 22px"
-                          fontSize="14px"
-                          fontWeight={700}
-                          color="#fff"
-                        >
-                          {item.selected_index.length} / {item.qtd_maximo}
-                        </Box>
-
-                        {item.obrigatorio === "N" ? (
-                          <Box
-                            bg="#E7F8E7"
-                            borderRadius="full"
-                            padding="10px 22px"
-                            fontSize="12px"
-                            fontWeight={700}
-                            color="#50A773"
-                          >
-                            Opcional
-                          </Box>
-                        ) : (
-                          <Box
-                            bg="#4B5563"
-                            borderRadius="full"
-                            padding="10px 22px"
-                            fontSize="12px"
-                            fontWeight={700}
-                            color="#FFF"
-                          >
-                            Obrigatório
-                          </Box>
-                        )}
-                      </Flex>
+                      <Text fontSize="14px" fontWeight={700} textTransform="uppercase" fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
+                        {item.descricao}
+                      </Text>
+                      <Icon as={FiChevronDown} transform={isOpen ? "rotate(180deg)" : "rotate(0deg)"} transition="transform .2s ease" />
                     </Flex>
 
-                    {item.adicionais.map((add, addIndex) => (
+                    {isOpen && item.adicionais.map((add, addIndex) => (
                       <Flex
                         key={add.id}
                         w="100%"
@@ -1580,13 +1427,13 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                         }
                       >
                         <Box textAlign="left">
-                          <Text fontSize="md" fontWeight={600}>
+                          <Text fontSize="12px" fontWeight={400} fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
                             {add.descricao}
                           </Text>
                         </Box>
 
                         <HStack spacing="12px" align="center">
-                          <Text fontSize="md" fontWeight={600}>
+                          <Text fontSize="14px" fontWeight={600}>
                             {moneyFormat.format(add.valor)}
                           </Text>
 
@@ -1628,7 +1475,8 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                       </Flex>
                     ))}
                   </Box>
-                ))}
+                  );
+                })}
               </Stack>
             )}
 
@@ -1723,8 +1571,9 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
       <CartModal
         isOpen={isCartOpen}
         onClose={onCartClose}
-        items={cartItems.map((item) => ({
-          id: item.id,
+        items={cartItems.map((item, index) => ({
+          // usar índice da linha para operações independentes por item
+          id: index,
           name: item.descricao || item.tag || "Produto",
           price: item.valor_total / item.quantidade,
           imageUrl: item.foto_destaque || "/placeholder.png",
@@ -1732,9 +1581,9 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
         }))}
         subtotal={cartTotal}
         discounts={0}
-        onInc={(id) => {
-          const updatedBag = cartItems.map((item) => {
-            if (item.id === id) {
+        onInc={(lineIndex) => {
+          const updatedBag = cartItems.map((item, idx) => {
+            if (idx === lineIndex) {
               const newQty = item.quantidade + 1;
               const unitPrice = item.valor_total / item.quantidade;
               return {
@@ -1754,10 +1603,10 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
             JSON.stringify(updatedBag)
           );
         }}
-        onDec={(id) => {
+        onDec={(lineIndex) => {
           const updatedBag = cartItems
-            .map((item) => {
-              if (item.id === id && item.quantidade > 1) {
+            .map((item, idx) => {
+              if (idx === lineIndex && item.quantidade > 1) {
                 const newQty = item.quantidade - 1;
                 const unitPrice = item.valor_total / item.quantidade;
                 return {
@@ -1778,8 +1627,10 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
             JSON.stringify(updatedBag)
           );
         }}
-        onRemove={(id) => {
-          const updatedBag = cartItems.filter((item) => item.id !== id);
+        onRemove={(lineIndex) => {
+          const updatedBag = cartItems.slice();
+          if (lineIndex < 0 || lineIndex >= updatedBag.length) return;
+          updatedBag.splice(lineIndex, 1);
           setCartItems(updatedBag);
           setCartTotal(
             updatedBag.reduce((sum, item) => sum + item.valor_total, 0)

@@ -501,10 +501,18 @@ function OrderContext({
         text: "Deseja remover item do pedido?",
         icon: "question",
         showCancelButton: true,
-        confirmButtonColor: data?.primary_color || "#3085d6",
-        cancelButtonColor: "#d33",
         confirmButtonText: "Sim, remover",
         cancelButtonText: "Cancelar",
+        buttonsStyling: false,
+        customClass: {
+          popup: "md-popup",
+          title: "md-title",
+          htmlContainer: "md-body",
+          actions: "md-actions",
+          confirmButton: "md-btn md-btn--confirm",
+          cancelButton: "md-btn md-btn--cancel",
+          icon: "md-icon",
+        },
       }).then((result) => {
         if (result.isConfirmed) {
           const newBag = bag.filter((_, index) => index !== key);
@@ -586,7 +594,13 @@ function OrderContext({
         handleOrder={handleOrder}
         subdomain={subdomain}
       />
-      <Container maxW="100%" centerContent mt={["80px", "100px"]} mb="30px">
+      <Container
+        maxW="100%"
+        centerContent
+        mt={["80px", "100px"]}
+        mb="30px"
+        fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+      >
         <Box w="100%">
           <Text color={data?.primary_color} fontSize="20px" fontWeight={600}>
             Carrinho
@@ -1476,10 +1490,19 @@ function OrderContext({
                   value="1"
                   defaultChecked
                   colorScheme="blue"
+                  fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                  fontSize="14px"
                 >
                   Entrega
                 </Radio>
-                <Radio size="md" name="delivery" value="2" colorScheme="blue">
+                <Radio
+                  size="md"
+                  name="delivery"
+                  value="2"
+                  colorScheme="blue"
+                  fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                  fontSize="14px"
+                >
                   Retirar do local
                 </Radio>
               </Stack>

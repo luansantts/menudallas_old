@@ -160,14 +160,22 @@ function ProductsList({ data, products, categories }) {
                             mt="8px"
                             mb="6px"
                           >
-                            {product.tamanhos
-                              ? moneyFormat.format(product.valor_de || 0)
-                              : ["P", "O"].indexOf(product.tipo) === -1 &&
-                                (product?.em_promocao == false
+                            {(["P", "O"].indexOf(product.tipo) > -1 || product.tamanhos) ? (
+                              <>
+                                {moneyFormat.format(product?.valor_de || 0)}{" "}
+                                <Text as="span" color="#9CA3AF" fontWeight={400}>até </Text>
+                                {moneyFormat.format(product?.valor_ate || 0)}
+                              </>
+                            ) : (
+                              <>
+                                {product?.em_promocao == false
                                   ? moneyFormat.format(product?.valor || 0)
                                   : moneyFormat.format(
-                                      product?.valor_Promocao || 0
-                                    ))}
+                                      // compat: algumas fontes usam valor_Promocao, outras valor_promocao
+                                      (product?.valor_Promocao ?? product?.valor_promocao) || 0
+                                    )}
+                              </>
+                            )}
                           </Text>
                         </Flex>
 

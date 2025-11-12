@@ -25,8 +25,9 @@ export default function Home() {
     try {
       // Salva tanto na chave antiga (compatibilidade) quanto na nova
       localStorage.setItem("tipo_consumo", tipo);
-      // Salva como "orderMode" conforme solicitado
-      const orderMode = tipo === "local" ? "dine-in" : "takeaway";
+      // Salva como "orderMode" para a tela de meu-pedido:
+      // "local" => retirar no local ("retirada"), "viagem" => entrega ("entrega")
+      const orderMode = tipo === "local" ? "retirada" : "entrega";
       localStorage.setItem("orderMode", orderMode);
     } catch (e) {
       // Ignora erros de localStorage
@@ -115,32 +116,32 @@ export default function Home() {
             bg="#F3F4F6"
             zIndex={0}
           />
-          
-          <Box
-            w="100%"
-            maxW="342px"
-            display="grid"
-            gridTemplateColumns={{ base: "repeat(2, 1fr)", sm: "repeat(2, 1fr)" }}
-            gap="6px"
+
+        <Box
+          w="100%"
+          maxW="342px"
+          display="grid"
+          gridTemplateColumns={{ base: "repeat(2, 1fr)", sm: "repeat(2, 1fr)" }}
+          gap="6px"
             position="relative"
             zIndex={1}
-          >
-            <CardOpcao
-              icon="/img/burger.png"
-              label="Para comer aqui"
-              tipo="local"
-              selectedTipo={selectedTipo}
-              onClick={() => selecionarTipo("local")}
-              brandColor={brandColor}
-            />
-            <CardOpcao
-              icon="/img/bag.png"
-              label="Para levar"
-              tipo="viagem"
-              selectedTipo={selectedTipo}
-              onClick={() => selecionarTipo("viagem")}
-              brandColor={brandColor}
-            />
+        >
+          <CardOpcao
+            icon="/img/burger.png"
+            label="Para comer aqui"
+            tipo="local"
+            selectedTipo={selectedTipo}
+            onClick={() => selecionarTipo("local")}
+            brandColor={brandColor}
+          />
+          <CardOpcao
+            icon="/img/bag.png"
+            label="Para levar"
+            tipo="viagem"
+            selectedTipo={selectedTipo}
+            onClick={() => selecionarTipo("viagem")}
+            brandColor={brandColor}
+          />
           </Box>
         </Box>
       </VStack>

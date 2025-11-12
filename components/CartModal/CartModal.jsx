@@ -21,8 +21,6 @@ import {
 } from "@chakra-ui/react";
 import { FiChevronLeft, FiChevronRight, FiTrash2 } from "react-icons/fi";
 import { useRouter } from "next/router";
-import CheckoutModal from "../CheckoutModal/CheckoutModal";
-import SuccessModal from "../SuccessModal/SuccessModal";
 
 const SITE_YELLOW = "#F59E0B"; // cor primária do site
 const SITE_YELLOW_DARK = "#E8A52D";
@@ -76,7 +74,9 @@ export default function CartModal({
   const derivedTotal = derivedSubtotal - derivedDiscounts;
 
   const goCheckout = () => {
-    checkoutModal.onOpen();
+    // Ir direto para a página de confirmação do pedido
+    onClose?.();
+    router.push("/meu-pedido");
   };
 
   return (
@@ -361,19 +361,6 @@ export default function CartModal({
         </DrawerContent>
       </Drawer>
 
-      {/* Modal 1 - Dados do cliente */}
-      <CheckoutModal
-        isOpen={checkoutModal.isOpen}
-        onClose={checkoutModal.onClose}
-        onSuccess={successModal.onOpen}
-        subdomain={subdomain}
-      />
-
-      {/* Modal 2 - Sucesso */}
-      <SuccessModal
-        isOpen={successModal.isOpen}
-        onClose={successModal.onClose}
-      />
     </>
   );
 }

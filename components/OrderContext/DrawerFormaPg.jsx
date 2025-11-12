@@ -115,6 +115,9 @@ function DrawerFormaPg({
             display="flex"
             alignItems="center"
             justifyContent="space-between"
+            fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+            fontWeight={700}
+            fontSize="14px"
           >
             Forma de pagamento
           </DrawerHeader>
@@ -127,6 +130,8 @@ function DrawerFormaPg({
                     size="md"
                     value={parseInt(item.id)}
                     colorScheme="blue"
+                    fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                    fontSize="14px"
                   >
                     {item.descricao}
                   </Radio>
