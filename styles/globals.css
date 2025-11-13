@@ -771,6 +771,7 @@ img.store-logo {
   gap: 12px;
   flex-wrap: nowrap;
   margin-top: 0;
+  background: transparent !important;
 }
 .cart-modal .cart-item .thumb {
   width: 64px;
@@ -794,7 +795,7 @@ img.store-logo {
   font-size: 0.875rem;
   padding: 2px 8px;
   border-radius: 8px;
-  background: var(--chakra-colors-gray-50);
+  background: transparent;
   line-height: 1.2;
 }
 .cart-modal .cart-item .qty {

@@ -1047,6 +1047,16 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                                                       let ind = dt.indexOf(sab);
                                                       dt.splice(ind, 1);
                                                     }
+                                                  } else {
+                                                    // Tentando adicionar um novo sabor quando já atingiu o limite
+                                                    toast({
+                                                      title: "Aviso",
+                                                      description: `Selecione até ${lengthObject.qtd_sabor} ${lengthObject.qtd_sabor === 1 ? "sabor" : "sabores"}`,
+                                                      status: "warning",
+                                                      duration: 2000,
+                                                      isClosable: true,
+                                                      position: "bottom-center",
+                                                    });
                                                   }
                                                 }
                                               }
@@ -1156,98 +1166,75 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
 
             {flavorsSelected && flavorsSelected.length ? (
               <Box
-                borderRadius="32px"
-                border="1px solid #E5E7EB"
-                bg="#FFFFFF"
-                overflow="hidden"
+                bg="transparent"
+                border="none"
+                borderRadius="0"
+                overflow="visible"
+                mt={4}
               >
                 <Flex
-                  flexWrap={["wrap", "initial"]}
                   w="100%"
-                  p={["20px", "28px"]}
+                  p={0}
                   alignItems="center"
                   justifyContent="space-between"
-                  bg="#FDFDFD"
+                  bg="transparent"
+                  borderBottom="1px solid #E5E7EB"
+                  mb={2}
+                  pb={2}
                 >
-                  <Box textAlign={["center", "initial"]} w={["100%", "60%"]}>
-                    <Text fontSize="lg" fontWeight={700}>
-                      Sabores escolhidos
-                    </Text>
-                  </Box>
-
-                  <Flex
-                    w={["100%", "auto"]}
-                    justifyContent={["center", "flex-end"]}
-                    mt={["16px", "0"]}
+                  <Text fontSize="14px" fontWeight={700} color="#111827" textTransform="uppercase" fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
+                    Sabores escolhidos
+                  </Text>
+                  <Box
+                    bg="#F3F4F6"
+                    borderRadius="999px"
+                    px="14px"
+                    py="6px"
+                    fontSize="12px"
+                    fontWeight={600}
+                    color="#323232"
                   >
-                    <Box
-                      bg={data?.primary_color || "#F59E0B"}
-                      borderRadius="full"
-                      padding="10px 22px"
-                      fontSize="14px"
-                      fontWeight={700}
-                      color="#fff"
-                    >
-                      {flavorsSelected.length} / {lengthObject.qtd_sabor}
-                    </Box>
-                  </Flex>
+                    {flavorsSelected.length} / {lengthObject.qtd_sabor}
+                  </Box>
                 </Flex>
 
                 {flavorsSelected?.map((sab, index) => (
-                  <Box
+                  <Flex
                     key={index}
                     w="100%"
-                    borderTop="1px solid #EEF2F7"
-                    padding={["18px", "24px"]}
+                    borderBottom={
+                      index + 1 === flavorsSelected.length
+                        ? "none"
+                        : "1px solid #E5E7EB"
+                    }
+                    padding={0}
+                    py={3}
+                    alignItems="center"
+                    justifyContent="space-between"
+                    flexWrap="wrap"
                   >
-                    <Flex
-                      alignItems="center"
-                      justifyContent="space-between"
-                      flexWrap="wrap"
-                    >
-                      <Box>
-                        <Text fontSize="md" fontWeight={700}>
-                          {sab?.descricao}
-                        </Text>
-                      </Box>
-
-                      <Box mt={["12px", "0"]}>
-                        <Checkbox
-                          isChecked
-                          onChange={() => {
-                            if (
-                              dt.descricao &&
-                              !dt.descricao.includes(sab.descricao)
-                            ) {
-                              const newFlavorsSelected = flavorsSelected.filter(
-                                (entry) => entry.id_sabor != sab.id_sabor
-                              );
-                              setFlavorsSelected(newFlavorsSelected);
-                            }
-                          }}
-                          size="lg"
-                          sx={{
-                            ".chakra-checkbox__control": {
-                              w: "20px",
-                              h: "20px",
-                              borderRadius: "6px",
-                              borderWidth: "2px",
-                              borderColor: data?.primary_color || "#CF3F2E",
-                              bg: data?.primary_color || "#CF3F2E",
-                              transition: "all .15s ease",
-                              boxShadow: "0 2px 6px rgba(207, 63, 46, .25)",
-                            },
-                          }}
-                        />
-                      </Box>
-                    </Flex>
-
-                    {sab?.observacao && (
-                      <Text fontSize="sm" mt="8px" color="#6B7280">
-                        Observação: {sab?.observacao}
+                    <Box>
+                      <Text
+                        fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                        fontSize="12px"
+                        fontWeight={400}
+                        color="#323232"
+                      >
+                        {sab?.descricao}
                       </Text>
-                    )}
-                  </Box>
+                      {sab?.observacao && (
+                        <Text
+                          fontSize="12px"
+                          mt="4px"
+                          color="#6B7280"
+                          fontStyle="italic"
+                          fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                        >
+                          {sab?.observacao}
+                        </Text>
+                      )}
+                    </Box>
+                  </Flex>
                 ))}
               </Box>
             ) : (
@@ -1330,7 +1317,11 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                             <Checkbox
                               isChecked={item.selected_index.includes(add)}
                               onChange={() => {
+                                // Verifica se é borda - se for, não limita a quantidade
+                                const isBorda = /borda/i.test(item.descricao || "");
+                                
                                 if (
+                                  !isBorda &&
                                   item.selected_index.length >=
                                     item.qtd_maximo &&
                                   !item.selected_index.includes(add) &&
@@ -1436,7 +1427,11 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                           <Checkbox
                             isChecked={item.selected_index.includes(add)}
                             onChange={() => {
+                              // Verifica se é borda - se for, não limita a quantidade
+                              const isBorda = /borda/i.test(item.descricao || "");
+                              
                               if (
+                                !isBorda &&
                                 item.selected_index.length >= item.qtd_maximo &&
                                 !item.selected_index.includes(add) &&
                                 item.qtd_maximo > 0
@@ -1574,6 +1569,12 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
           price: item.valor_total / item.quantidade,
           imageUrl: item.foto_destaque || "/placeholder.png",
           qty: item.quantidade,
+          sabores: item.sabores || [],
+          adicional: item.adicional || [],
+          total_adicional: item.total_adicional || 0,
+          tipo: item.tipo,
+          tamanho: item.tamanho,
+          data: data,
         }))}
         subtotal={cartTotal}
         discounts={0}
