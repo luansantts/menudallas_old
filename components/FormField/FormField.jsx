@@ -25,7 +25,9 @@ const FormField = ({ component: Component, field, form, type, ...props }) => {
       isInvalid={hasError}
       mb={3}
     >
-      <FormLabel htmlFor={field.name}>{props.placeholder}</FormLabel>
+      <FormLabel htmlFor={field.name} {...(props.labelProps || {})}>
+        {props.placeholder}
+      </FormLabel>
       <Component
         field={field}
         form={form}

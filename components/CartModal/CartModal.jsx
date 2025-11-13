@@ -12,6 +12,7 @@ import {
   VStack,
   Text,
   IconButton,
+  Icon,
   Image,
   Divider,
   Button,
@@ -20,8 +21,6 @@ import {
 } from "@chakra-ui/react";
 import { FiChevronLeft, FiChevronRight, FiTrash2 } from "react-icons/fi";
 import { useRouter } from "next/router";
-import CheckoutModal from "../CheckoutModal/CheckoutModal";
-import SuccessModal from "../SuccessModal/SuccessModal";
 
 const SITE_YELLOW = "#F59E0B"; // cor primária do site
 const SITE_YELLOW_DARK = "#E8A52D";
@@ -75,7 +74,9 @@ export default function CartModal({
   const derivedTotal = derivedSubtotal - derivedDiscounts;
 
   const goCheckout = () => {
-    checkoutModal.onOpen();
+    // Ir direto para a página de confirmação do pedido
+    onClose?.();
+    router.push("/meu-pedido");
   };
 
   return (
@@ -83,20 +84,39 @@ export default function CartModal({
       <Drawer placement="right" isOpen={isOpen} onClose={onClose}>
         <DrawerOverlay bg="blackAlpha.400" />
         <DrawerContent
-          // largura menor, igual ao mock
-          maxW={{ base: "88vw", sm: "420px" }}
-          w="100%"
+          w="92vw"
+          maxW="400px"
           borderLeftRadius="2xl"
           boxShadow="xl"
           className="cart-modal"
+          display="flex"
+          flexDirection="column"
         >
           <DrawerCloseButton top="22px" right="22px" size="lg" />
-          <DrawerHeader fontSize="xl" fontWeight="700" px="6" py="4">
+          <DrawerHeader
+            fontSize="18px"
+            fontWeight="600"
+            px="20px"
+            h="40px"
+            py="0"
+            display="flex"
+            alignItems="center"
+            borderBottom="none"
+            borderBottomWidth="0"
+            borderColor="transparent"
+          >
             Sacola
           </DrawerHeader>
 
-          <DrawerBody overflowY="auto" px={6} pt={2} pb={0}>
-            <VStack align="stretch" spacing={4}>
+          <DrawerBody
+            overflowY="auto"
+            px="20px"
+            pt="8px"
+            pb="0"
+            display="flex"
+            flexDirection="column"
+          >
+            <VStack align="stretch" spacing="16px" flex="1" mb="24px">
               {items.map((item) => {
                 const unit = parseBRL(
                   item.price ?? item.unitPrice ?? item.valor
@@ -105,27 +125,27 @@ export default function CartModal({
                 const lineTotal = unit * qty; // Total da linha (preço × quantidade)
 
                 return (
-                  <HStack
+                  <Flex
                     key={item.id}
-                    align="center"
-                    spacing={3}
                     className="cart-item"
-                    flexWrap="nowrap"
-                    px="2"
-                    py="2"
-                    rounded="md"
+                    direction="row"
+                    align="center"
+                    p="0"
+                    gap="16px"
+                    w="100%"
                   >
-                    {/* thumb menor */}
+                    {/* Thumbnail */}
                     <Box
                       className="thumb"
-                      bg="gray.50"
-                      rounded="xl"
-                      borderWidth="1px"
-                      borderColor="gray.100"
+                      w="77px"
+                      h="77px"
+                      borderRadius="9px"
+                      bg="rgba(0,0,0,0.08)"
                       overflow="hidden"
-                      w="64px"
-                      h="64px"
-                      flex="0 0 64px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      flexShrink={0}
                     >
                       <Image
                         src={item.imageUrl || "/placeholder.png"}
@@ -136,164 +156,211 @@ export default function CartModal({
                       />
                     </Box>
 
-                    <VStack align="start" spacing={2} flex="1" minW={0}>
-                      {/* Nome do produto: fontSize menor e mais fino */}
+                    {/* Coluna de informações */}
+                    <Flex
+                      className="info"
+                      direction="column"
+                      align="flex-start"
+                      flex="1"
+                      minW="0"
+                      gap="4px"
+                    >
                       <Text
-                        className="cart-item-title title"
-                        fontSize="sm"
-                        fontWeight="500"
-                        lineHeight="short"
+                        className="cart-item-title"
                         noOfLines={1}
-                        wordBreak="break-word"
-                        color="gray.800"
+                        fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                        fontWeight="400"
+                        fontSize="12px"
+                        lineHeight="16px"
+                        color="#323232"
+                        w="100%"
                       >
                         {item.name}
                       </Text>
 
-                      <HStack justify="space-between" w="full">
-                        {/* Total da linha: preço × quantidade */}
-                        <Text
-                          className="price-pill"
-                          fontWeight="700"
-                          lineHeight="1.2"
-                        >
-                          {formatBRL(lineTotal)}
-                        </Text>
+                      <Text
+                        className="price-pill"
+                        fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                        fontWeight="600"
+                        fontSize="14px"
+                        lineHeight="20px"
+                        color="#323232"
+                      >
+                        {formatBRL(lineTotal)}
+                      </Text>
 
-                        <HStack spacing={2} className="qty">
-                          {/* stepper menor */}
-                          <IconButton
-                            aria-label="Diminuir"
-                            icon={<FiChevronLeft />}
-                            size="sm"
-                            rounded="xl"
-                            variant="outline"
-                            onClick={() => onDec?.(item.id)}
-                          />
-                          {/* Quantidade: fontSize: "16px" */}
-                          <Text fontSize="16px" w="18px" textAlign="center">
-                            {qty}
-                          </Text>
-                          <IconButton
-                            aria-label="Aumentar"
-                            icon={<FiChevronRight />}
-                            size="sm"
-                            rounded="xl"
-                            bg="#CF3F2E"
-                            color="white"
-                            _hover={{ bg: "#B53626" }}
-                            _active={{ bg: "#B53626" }}
-                            onClick={() => onInc?.(item.id)}
-                          />
-                          <IconButton
-                            aria-label="Remover"
-                            icon={<FiTrash2 />}
-                            size="sm"
-                            rounded="xl"
-                            variant="outline"
-                            onClick={() => onRemove?.(item.id)}
-                          />
-                        </HStack>
+                      {/* Controles: quantidade + remover na mesma linha */}
+                      <HStack
+                        className="qty"
+                        spacing="8px"
+                        mt="4px"
+                        align="center"
+                      >
+                        <IconButton
+                          aria-label="Diminuir"
+                          onClick={() => onDec?.(item.id)}
+                          w="32px"
+                          h="32px"
+                          minW="32px"
+                          p="8px"
+                          bg="#FFFFFF"
+                          border="1px solid #E5E7EB"
+                          borderRadius="8px"
+                          color="#323232"
+                          _hover={{ bg: "#F9FAFB" }}
+                          icon={<Icon as={FiChevronLeft} boxSize="16px" />}
+                        />
+                        <Text
+                          fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                          fontWeight="400"
+                          fontSize="14px"
+                          lineHeight="20px"
+                          color="#323232"
+                          w="24px"
+                          textAlign="center"
+                        >
+                          {qty}
+                        </Text>
+                        <IconButton
+                          aria-label="Aumentar"
+                          onClick={() => onInc?.(item.id)}
+                          w="32px"
+                          h="32px"
+                          minW="32px"
+                          p="8px"
+                          bg="#D52B1E"
+                          color="#FFFFFF"
+                          borderRadius="10px"
+                          border="transparent"
+                          _hover={{ bg: "#B32017" }}
+                          _active={{ bg: "#B32017", boxShadow: "none" }}
+                          _focusVisible={{ boxShadow: "none" }}
+                          icon={<Icon as={FiChevronRight} boxSize="16px" />}
+                        />
+                        <IconButton
+                          aria-label="Remover"
+                          onClick={() => onRemove?.(item.id)}
+                          w="32px"
+                          h="32px"
+                          minW="32px"
+                          p="8px"
+                          bg="#FFFFFF"
+                          border="1px solid #E5E7EB"
+                          borderRadius="8px"
+                          ml="8px"
+                          _hover={{ bg: "#F9FAFB" }}
+                          icon={<Icon as={FiTrash2} boxSize="16px" />}
+                        />
                       </HStack>
-                    </VStack>
-                  </HStack>
+                    </Flex>
+                  </Flex>
                 );
               })}
 
               {items.length === 0 && (
-                <Flex
-                  direction="column"
+                <VStack
+                  className="cart-empty"
+                  spacing="1"
                   align="center"
                   justify="center"
-                  minH="40vh"
-                  textAlign="center"
-                  gap={2}
                 >
-                  <Text fontSize="md" fontWeight="semibold" color="#CF3F2E">
+                  <Text className="cart-empty__title">
                     Sua sacola está vazia.
                   </Text>
-                  <Text fontSize="sm" color="#F59E0B">
+                  <Text className="cart-empty__subtitle">
                     Adicione itens para continuar.
                   </Text>
-                </Flex>
+                </VStack>
               )}
             </VStack>
           </DrawerBody>
 
           {/* Footer com os totais fixos na parte de baixo */}
-          <DrawerFooter px={0} pt="16px">
-            <VStack w="100%" spacing="16px">
+          <DrawerFooter px="20px" pt="0" pb="20px">
+            <VStack
+              w="100%"
+              spacing="16px"
+              className="cart-frame"
+              flex="1"
+              justify="flex-end"
+            >
               <Box
+                className="cart-status"
                 w="100%"
                 border="1px solid"
-                borderColor="gray.100"
-                borderRadius="16px"
-                p="16px"
+                borderColor="#E5E7EB"
+                borderRadius="12px"
+                p="20px"
                 bg="white"
               >
-                <HStack justify="space-between" py="8px">
-                  <Text fontSize="16px" color="gray.500">
+                <HStack justify="space-between" className="cart-row">
+                  <Text fontSize="12px" color="#6B7280">
                     Subtotal
                   </Text>
-                  <Text fontSize="16px" fontWeight={600} color="gray.800">
+                  <Text fontSize="12px" fontWeight={400} color="#323232">
                     {formatBRL(derivedSubtotal)}
                   </Text>
                 </HStack>
-                <Divider />
-                <HStack justify="space-between" py="8px">
-                  <Text fontSize="16px" color="gray.500">
+                <Divider
+                  className="cart-divider"
+                  my="12px"
+                  borderColor="#E5E7EB"
+                />
+                <HStack justify="space-between" className="cart-row">
+                  <Text fontSize="12px" color="#6B7280">
                     Descontos
                   </Text>
-                  <Text fontSize="16px" fontWeight={600} color="gray.800">
+                  <Text fontSize="12px" fontWeight={400} color="#323232">
+                    {derivedDiscounts > 0 ? "-" : ""}
                     {formatBRL(derivedDiscounts)}
                   </Text>
                 </HStack>
-                <Divider />
-                <HStack justify="space-between" pt="8px">
-                  <Text fontSize="18px" fontWeight={700} color="gray.700">
+                <Divider
+                  className="cart-divider"
+                  my="12px"
+                  borderColor="#E5E7EB"
+                />
+                <HStack justify="space-between" className="cart-row total">
+                  <Text fontSize="14px" fontWeight={600} color="#323232">
                     Total
                   </Text>
-                  <Text fontSize="18px" fontWeight={700} color="gray.900">
+                  <Text fontSize="14px" fontWeight={600} color="#323232">
                     {formatBRL(derivedTotal)}
                   </Text>
                 </HStack>
               </Box>
 
-              {/* Botão Finalizar Pedido - primário do site */}
+              {/* Botão Finalizar Pedido */}
               <Button
+                className="cart-cta"
                 onClick={goCheckout}
-                w="92%"
-                h="48px"
-                fontSize="sm"
-                fontWeight="700"
+                w="100%"
+                py="14px"
+                px="16px"
+                h="auto"
+                fontSize="14px"
+                fontWeight="600"
                 rounded="full"
-                alignSelf="center"
-                mt="4"
-                bg="#CF3F2E"
+                borderRadius="62px"
+                bg="#FFB100"
                 color="white"
-                _hover={{ bg: "#B53626" }}
-                _active={{ bg: "#B53626" }}
+                boxShadow="0px 2px 8px rgba(255, 177, 0, 0.3)"
+                mx="auto"
+                _hover={{
+                  bg: "#E8A000",
+                  boxShadow: "0px 4px 12px rgba(255, 177, 0, 0.4)",
+                }}
+                _active={{ bg: "#E8A000" }}
+                disabled={items.length === 0}
+                _disabled={{ opacity: 0.5, cursor: "not-allowed" }}
               >
-                Finalizar Pedido
+                Finalizar pedido
               </Button>
             </VStack>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
 
-      {/* Modal 1 - Dados do cliente */}
-      <CheckoutModal
-        isOpen={checkoutModal.isOpen}
-        onClose={checkoutModal.onClose}
-        onSuccess={successModal.onOpen}
-        subdomain={subdomain}
-      />
-
-      {/* Modal 2 - Sucesso */}
-      <SuccessModal
-        isOpen={successModal.isOpen}
-        onClose={successModal.onClose}
-      />
     </>
   );
 }

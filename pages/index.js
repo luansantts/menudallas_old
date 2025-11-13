@@ -7,11 +7,12 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import { GiHamburger } from "react-icons/gi";
-import { BsBagFill } from "react-icons/bs";
+import { useRouter } from "next/router";
+import NextImage from "next/image";
 
 export default function Home() {
   const [selectedTipo, setSelectedTipo] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const tipo = localStorage.getItem("tipo_consumo");
@@ -21,8 +22,19 @@ export default function Home() {
   }, []);
 
   function selecionarTipo(tipo) {
-    localStorage.setItem("tipo_consumo", tipo);
+    try {
+      // Salva tanto na chave antiga (compatibilidade) quanto na nova
+      localStorage.setItem("tipo_consumo", tipo);
+      // Salva como "orderMode" para a tela de meu-pedido:
+      // "local" => retirar no local ("retirada"), "viagem" => entrega ("entrega")
+      const orderMode = tipo === "local" ? "retirada" : "entrega";
+      localStorage.setItem("orderMode", orderMode);
+    } catch (e) {
+      // Ignora erros de localStorage
+    }
     setSelectedTipo(tipo);
+    // Navega para /lista após selecionar
+    router.push("/lista");
   }
 
   const brandColor = useColorModeValue("#CF3F2E", "#CF3F2E");
@@ -35,15 +47,15 @@ export default function Home() {
       minH="100vh"
       bg="#FFFFFF"
       px="16px"
-      pt="24px"
-      pb="40px"
+      py="40px"
       display="flex"
       flexDirection="column"
       alignItems="center"
+      justifyContent="center"
       boxSizing="border-box"
       fontFamily="var(--font-poppins), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
     >
-      <VStack spacing="60px" w="100%" maxW="342px" alignItems="center">
+      <VStack spacing="48px" w="100%" maxW="342px" alignItems="center">
         <VStack spacing="6px" alignItems="center">
           <Image
             src="https://dallas-0001.s3.sa-east-1.amazonaws.com/logo_0001.png"
@@ -88,12 +100,34 @@ export default function Home() {
         <Box
           w="100%"
           maxW="342px"
+          position="relative"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          {/* Linha horizontal por trás dos botões */}
+          <Box
+            position="absolute"
+            left="-24px"
+            right="-24px"
+            top="50%"
+            transform="translateY(-50%)"
+            height="1px"
+            bg="#F3F4F6"
+            zIndex={0}
+          />
+
+        <Box
+          w="100%"
+          maxW="342px"
           display="grid"
           gridTemplateColumns={{ base: "repeat(2, 1fr)", sm: "repeat(2, 1fr)" }}
-          gap="24px"
+          gap="6px"
+            position="relative"
+            zIndex={1}
         >
           <CardOpcao
-            icon={GiHamburger}
+            icon="/img/burger.png"
             label="Para comer aqui"
             tipo="local"
             selectedTipo={selectedTipo}
@@ -101,13 +135,14 @@ export default function Home() {
             brandColor={brandColor}
           />
           <CardOpcao
-            icon={BsBagFill}
+            icon="/img/bag.png"
             label="Para levar"
             tipo="viagem"
             selectedTipo={selectedTipo}
             onClick={() => selecionarTipo("viagem")}
             brandColor={brandColor}
           />
+          </Box>
         </Box>
       </VStack>
     </Box>
@@ -148,11 +183,7 @@ function CardOpcao({ icon, label, tipo, selectedTipo, onClick, brandColor }) {
         outlineOffset: "2px",
       }}
     >
-      <Icon
-        as={icon}
-        boxSize="80px"
-        color={isSelected ? brandColor : "#323232"}
-      />
+      <NextImage src={icon} alt={label} width={80} height={80} priority />
       <Box
         display="inline-flex"
         justifyContent="center"

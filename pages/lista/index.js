@@ -122,8 +122,10 @@ function lista({ data, subdomain }) {
           <CartModal
             isOpen={isCartOpen}
             onClose={onCartClose}
-            items={cartItems.map((item) => ({
-              id: item.id,
+            items={cartItems.map((item, index) => ({
+              // id aqui representa o índice da linha no carrinho,
+              // garantindo operações por item mesmo com produtos duplicados
+              id: index,
               name: item.descricao || item.tag || "Produto",
               price: item.valor_total / item.quantidade,
               imageUrl: item.foto_destaque || "/placeholder.png",
@@ -131,9 +133,9 @@ function lista({ data, subdomain }) {
             }))}
             subtotal={cartTotal}
             discounts={0}
-            onInc={(id) => {
-              const updatedBag = cartItems.map((item) => {
-                if (item.id === id) {
+            onInc={(lineIndex) => {
+              const updatedBag = cartItems.map((item, idx) => {
+                if (idx === lineIndex) {
                   const newQty = item.quantidade + 1;
                   const unitPrice = item.valor_total / item.quantidade;
                   return {
@@ -153,10 +155,10 @@ function lista({ data, subdomain }) {
                 JSON.stringify(updatedBag)
               );
             }}
-            onDec={(id) => {
+            onDec={(lineIndex) => {
               const updatedBag = cartItems
-                .map((item) => {
-                  if (item.id === id && item.quantidade > 1) {
+                .map((item, idx) => {
+                  if (idx === lineIndex && item.quantidade > 1) {
                     const newQty = item.quantidade - 1;
                     const unitPrice = item.valor_total / item.quantidade;
                     return {
@@ -177,8 +179,11 @@ function lista({ data, subdomain }) {
                 JSON.stringify(updatedBag)
               );
             }}
-            onRemove={(id) => {
-              const updatedBag = cartItems.filter((item) => item.id !== id);
+            onRemove={(lineIndex) => {
+              // Remove apenas o item específico clicado (por índice da linha)
+              const updatedBag = cartItems.slice();
+              if (lineIndex < 0 || lineIndex >= updatedBag.length) return;
+              updatedBag.splice(lineIndex, 1);
               setCartItems(updatedBag);
               setCartTotal(
                 updatedBag.reduce((sum, item) => sum + item.valor_total, 0)

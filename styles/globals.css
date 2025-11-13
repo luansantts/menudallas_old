@@ -128,7 +128,7 @@ a {
 .store-info {
   display: flex;
   align-items: initial !important;
-  gap: 12px;
+  gap: 0px;
   padding: 18px 0 0 0;
   margin-top: 8px;
   background: transparent;
@@ -454,7 +454,7 @@ a {
 .menu-card [data-role="category-title"] {
   font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif !important;
-  font-style: normal !important;
+  font-style: normal;
   font-weight: 600 !important;
   font-size: 14px !important;
   line-height: 21px !important;
@@ -650,7 +650,7 @@ img.store-logo {
 
 .keen-slider.chips {
   gap: 12px !important;
-  padding: 0 20px !important;
+  padding: 0 0px !important;
 }
 .keen-slider.chips .keen-slider__slide {
   width: auto !important;
@@ -1290,17 +1290,23 @@ img.store-logo {
   width: 82px !important;
   height: 82px !important;
   border-radius: 9.23944px !important;
-  object-fit: cover;
-  background: rgba(0, 0, 0, 0.08);
-  flex: 0 0 auto !important;
+  background: rgba(0, 0, 0, 0.08) !important;
+  flex: none !important;
   overflow: hidden;
+  /* Centralizar imagens dos produtos na lista */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative;
+  margin: 0 auto;
 }
 
 .page-list .product-thumb img,
 .page-list .imgProdList {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
   display: block;
 }
 
@@ -1330,8 +1336,8 @@ img.store-logo {
     padding: 4px 8px;
   }
   .page-list .product-thumb {
-    width: 72px;
-    height: 72px;
+    width: 82px !important;
+    height: 82px !important;
   }
   .page-list .product-info {
     width: calc(100% - 90px);
@@ -1406,26 +1412,6 @@ img.store-logo {
 /* Botões de quantidade - border-radius 10px */
 #product-page .chakra-box[w="36px"][h="36px"] {
   border-radius: 10px !important;
-  width: 32px !important;
-  height: 32px !important;
-  padding: 8px !important;
-}
-
-/* Botão de incrementar quantidade - vermelho */
-#product-page .chakra-box[w="36px"][h="36px"][bg="#f59e0b"],
-#product-page .chakra-box[bg="#f59e0b"] {
-  background: #d52b1e !important;
-  border: none !important;
-}
-
-/* Container de preço + quantidade - gap 10px */
-#product-page .chakra-flex[justify="space-between"][align="center"][my="4"] {
-  gap: 10px !important;
-}
-
-/* Container de quantidade - gap 8px */
-#product-page .chakra-flex[align="center"][gap="2"] {
-  gap: 8px !important;
 }
 
 /* ====== SEÇÃO "SOBRE" ====== */
@@ -1471,4 +1457,109 @@ img.store-logo {
   font-size: 14px !important;
   line-height: 21px !important;
   color: #7e8392 !important;
+}
+
+/* Remover highlight azul no toque (iOS/Android) */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Manter acessibilidade: só mostra foco para teclado, não para toque/click */
+:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* ====== QUANTIDADE - Página de Produto ====== */
+/* Linha de preço + quantidade (posicionamento) */
+.priceRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.quantity {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+  padding: 0;
+  gap: 8px;
+  margin: 0;
+  width: 95px;
+  height: 32px;
+  flex: none;
+  flex-grow: 10;
+}
+
+.qty-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.qty-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 15px;
+  font-weight: 600;
+  color: #323232;
+  font-family: var(--font-poppins), system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif;
+}
+
+/* ====== MODAL DA SACOLA - Ajustes de layout ====== */
+/* 1) Título "Sacola" direto na página */
+.cart-modal .chakra-modal__header,
+.cart-modal .chakra-drawer__header {
+  position: static;
+  display: flex;
+  align-items: center;
+  padding: 0 20px !important;
+  height: 40px;
+  margin: 32px 0 24px !important;
+  border-bottom: none !important;
+  border-bottom-width: 0 !important;
+}
+
+/* 2) Empurrar a imagem do produto levemente para a direita */
+.cart-modal .cart-item {
+  padding-left: 8px;
+}
+
+.cart-modal .thumb {
+  margin-left: 8px;
+}
+
+/* ==== Modais arredondadas do /meu-pedido ==== */
+.mp-rounded-modal {
+  border-radius: 24px !important;
+  overflow: hidden;              /* garante que o conteúdo siga o raio */
+}
+
+/* Ajuste do espaçamento interno */
+.mp-rounded-modal .chakra-modal__header {
+  padding: 16px 24px !important;
+  text-align: center;
+}
+
+.mp-rounded-modal .chakra-modal__body {
+  padding: 16px 24px 24px !important;
+}
+
+/* Remove bordas/linhas extras se houver */
+.mp-rounded-modal .chakra-modal__header,
+.mp-rounded-modal .chakra-modal__body {
+  border-bottom: none !important;
 }

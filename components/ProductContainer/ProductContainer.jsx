@@ -60,6 +60,7 @@ function ProductContainer({ data, productDetail, subdomain, getAll }) {
       </Head>
       <NavbarProduct
         productData={productData}
+        subdomain={subdomain}
         onOpenCart={() => {
           // Função para abrir a sacola - será implementada no InfoProduct
           const event = new CustomEvent("openCart");

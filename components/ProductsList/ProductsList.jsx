@@ -160,39 +160,50 @@ function ProductsList({ data, products, categories }) {
                             mt="8px"
                             mb="6px"
                           >
-                            {product.tamanhos
-                              ? moneyFormat.format(product.valor_de || 0)
-                              : ["P", "O"].indexOf(product.tipo) === -1 &&
-                                (product?.em_promocao == false
+                            {(["P", "O"].indexOf(product.tipo) > -1 || product.tamanhos) ? (
+                              <>
+                                {moneyFormat.format(product?.valor_de || 0)}{" "}
+                                <Text as="span" color="#9CA3AF" fontWeight={400}>até </Text>
+                                {moneyFormat.format(product?.valor_ate || 0)}
+                              </>
+                            ) : (
+                              <>
+                                {product?.em_promocao == false
                                   ? moneyFormat.format(product?.valor || 0)
                                   : moneyFormat.format(
-                                      product?.valor_Promocao || 0
-                                    ))}
+                                      // compat: algumas fontes usam valor_Promocao, outras valor_promocao
+                                      (product?.valor_Promocao ?? product?.valor_promocao) || 0
+                                    )}
+                              </>
+                            )}
                           </Text>
                         </Flex>
 
                         <Box
                           className="product-thumb"
-                          w={["112px", "128px"]}
-                          h={["112px", "128px"]}
-                          borderRadius="24px"
-                          bg="gray.50"
-                          display="grid"
-                          placeItems="center"
+                          w="82px"
+                          h="82px"
+                          borderRadius="9.23944px"
+                          bg="rgba(0, 0, 0, 0.08)"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
                           overflow="hidden"
                           flexShrink={0}
+                          flexGrow={0}
+                          position="relative"
                         >
                           <Image
                             className="imgProdList"
                             src={product.foto_destaque}
-                            width={100}
-                            height={100}
-                            objectFit="contain"
-                            objectPosition="center"
+                            width={82}
+                            height={82}
                             style={{
-                              maxWidth: "100%",
-                              maxHeight: "100%",
+                              width: "100%",
+                              height: "100%",
                               objectFit: "contain",
+                              objectPosition: "center",
+                              display: "block",
                             }}
                             alt={product.descricao}
                             loader={({ src }) => {
