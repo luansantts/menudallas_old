@@ -882,34 +882,24 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                     <DrawerBody overflowY="auto">
                       {!searchFlavors && (
                         <>
-                          <Flex
-                            flexWrap={["wrap", "initial"]}
-                            w="100%"
-                            p="20px 25px 0"
-                            alignItems="center"
-                            justifyContent="space-between"
-                          >
-                            <Box>
-                              <Text
-                                fontSize="14px"
-                                fontWeight={700}
-                                color="#111827"
-                                textTransform="uppercase"
-                                fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
-                              >
-                                Sabores disponíveis para esse tamanho
-                              </Text>
-                              <Text fontSize="12px" color="#6B7280" fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
-                                Escolha no mínimo 1 opção
-                              </Text>
-                            </Box>
-
-                            <Flex
-                              w={["100%", "auto"]}
-                              justifyContent={["flex-start", "flex-end"]}
-                              mt={["12px", "0"]}
-                              gap="12px"
+                          <Box w="100%" p="20px 25px 0" textAlign="center">
+                            <Text
+                              fontSize="14px"
+                              fontWeight={700}
+                              color="#111827"
+                              textTransform="uppercase"
+                              fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
                             >
+                              Sabores disponíveis para esse tamanho
+                            </Text>
+                            <Text
+                              fontSize="12px"
+                              color="#6B7280"
+                              fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                            >
+                              Escolha no mínimo 1 opção
+                            </Text>
+                            <Flex justifyContent="center" mt="12px" gap="12px">
                               <Box
                                 bg={data?.primary_color}
                                 borderRadius="5px"
@@ -920,7 +910,6 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                               >
                                 {flavorsSelected.length} / {lengthObject.qtd_sabor}
                               </Box>
-
                               <Box
                                 bg="#F3F4F6"
                                 borderRadius="999px"
@@ -932,7 +921,7 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                                 Obrigatório
                               </Box>
                             </Flex>
-                          </Flex>
+                          </Box>
 
                           <Box p="10px 25px 25px" overflowY="auto" maxH="650px">
                             <Box>
@@ -942,10 +931,17 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                                 color="#111827"
                                 textTransform="uppercase"
                                 fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                                textAlign="center"
                               >
                                 Faça sua escolha de sabores
                               </Text>
-                              <Text fontSize="12px" color="#6B7280" mb="10px" fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif">
+                              <Text
+                                fontSize="12px"
+                                color="#6B7280"
+                                mb="10px"
+                                fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                                textAlign="center"
+                              >
                                 Escolha até {lengthObject.qtd_sabor} opç
                                 {lengthObject.qtd_sabor > 1 ? "ões" : "ão"}
                               </Text>
@@ -992,7 +988,7 @@ function InfoProduct({ subdomain, data, productData, sabores, getAll }) {
                                             fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
                                             fontWeight={600}
                                             color="gray.800"
-                                            fontSize="md"
+                                            fontSize="14px"
                                           >
                                             {moneyFormat.format(sab?.valor)}
                                           </Text>

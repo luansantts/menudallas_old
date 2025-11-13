@@ -1541,3 +1541,25 @@ img.store-logo {
 .cart-modal .thumb {
   margin-left: 8px;
 }
+
+/* ==== Modais arredondadas do /meu-pedido ==== */
+.mp-rounded-modal {
+  border-radius: 24px !important;
+  overflow: hidden;              /* garante que o conteúdo siga o raio */
+}
+
+/* Ajuste do espaçamento interno */
+.mp-rounded-modal .chakra-modal__header {
+  padding: 16px 24px !important;
+  text-align: center;
+}
+
+.mp-rounded-modal .chakra-modal__body {
+  padding: 16px 24px 24px !important;
+}
+
+/* Remove bordas/linhas extras se houver */
+.mp-rounded-modal .chakra-modal__header,
+.mp-rounded-modal .chakra-modal__body {
+  border-bottom: none !important;
+}

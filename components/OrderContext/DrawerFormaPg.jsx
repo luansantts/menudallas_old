@@ -1,10 +1,5 @@
 import {
   Button,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -101,29 +96,36 @@ function DrawerFormaPg({
 
   return (
     <>
-      <Drawer
-        placement="bottom"
-        onClose={() => setOpenFormaPg(false)}
-        isOpen={openFormaPg}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader
-            position="relative"
-            borderBottomWidth="1px"
-            textAlign="center"
+      <Modal isOpen={openFormaPg} onClose={() => setOpenFormaPg(false)} isCentered>
+        <ModalOverlay />
+        <ModalContent
+          className="mp-rounded-modal"
+          maxW="420px"
+          w="88vw"
+          borderRadius="24px"
+          boxShadow="0 10px 30px rgba(17, 24, 39, 0.12)"
+        >
+          <ModalBody
+            minH="100px"
+            bg="white"
             display="flex"
+            flexDirection="column"
             alignItems="center"
-            justifyContent="space-between"
-            fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
-            fontWeight={700}
-            fontSize="14px"
+            px="24px"
+            py="20px"
           >
-            Forma de pagamento
-          </DrawerHeader>
-          <DrawerBody minH="100px" bg="rgb(243, 245, 247)">
-            <RadioGroup mt="12px" value={parseInt(forma)} onChange={setForma}>
-              <Stack>
+            <Text
+              fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+              fontWeight={700}
+              fontSize="16px"
+              mb="12px"
+              textAlign="center"
+              color="#111827"
+            >
+              Forma de pagamento
+            </Text>
+            <RadioGroup value={parseInt(forma)} onChange={setForma} w="100%">
+              <Stack align="center" spacing={4}>
                 {formasPgData.map((item, index) => (
                   <Radio
                     key={index}
@@ -133,21 +135,42 @@ function DrawerFormaPg({
                     fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
                     fontSize="14px"
                   >
-                    {item.descricao}
+                    <Text textAlign="center" w="100%" fontSize="14px">
+                      {item.descricao}
+                    </Text>
                   </Radio>
                 ))}
               </Stack>
             </RadioGroup>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
 
-      <Modal isOpen={isOpen} onClose={handleCloseModalTroco}>
+      <Modal isOpen={isOpen} onClose={handleCloseModalTroco} isCentered>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{formaSelectedData?.descricao}</ModalHeader>
+        <ModalContent
+          className="mp-rounded-modal"
+          maxW="420px"
+          w="88vw"
+          borderRadius="24px"
+          boxShadow="0 10px 30px rgba(17, 24, 39, 0.12)"
+        >
+          <ModalHeader
+            textAlign="center"
+            fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+            fontWeight={700}
+            fontSize="14px"
+            pb="8px"
+          >
+            {formaSelectedData?.descricao}
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody bg="rgb(243, 245, 247)">
+          <ModalBody
+            bg="white"
+            px="24px"
+            pb="12px"
+            fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+          >
             <Formik
               enableReinitialize
               initialErrors={{}}
@@ -205,6 +228,7 @@ function DrawerFormaPg({
                     name="troco"
                     type="text"
                     placeholder="Valor para troco"
+                    labelProps={{ textAlign: 'center', fontSize: '12px', fontWeight: 600, mb: '10px', color: '#111827' }}
                     component={FormField.InputMoney}
                     error={errors.troco}
                   />
@@ -213,15 +237,21 @@ function DrawerFormaPg({
             </Formik>
           </ModalBody>
 
-          <ModalFooter>
-            <Button mr={3} onClick={handleCloseModalTroco}>
+          <ModalFooter
+            px="24px"
+            pb="20px"
+          >
+            <Button mr={3} onClick={handleCloseModalTroco} borderRadius="9999px">
               Fechar
             </Button>
             <Button
               form="formTroco"
               type="submit"
-              variant="btnDallas"
+              bg={data?.primary_color || "#CF3F2E"}
               color="white"
+              borderRadius="9999px"
+              px="24px"
+              _hover={{ opacity: 0.9, bg: data?.primary_color || "#CF3F2E" }}
             >
               Salvar
             </Button>

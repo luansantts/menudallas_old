@@ -10,6 +10,11 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
   Flex,
   FormControl,
   FormLabel,
@@ -597,12 +602,17 @@ function OrderContext({
       <Container
         maxW="100%"
         centerContent
-        mt={["80px", "100px"]}
+        pt={["88px", "88px"]}
         mb="30px"
         fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
       >
         <Box w="100%">
-          <Text color={data?.primary_color} fontSize="20px" fontWeight={600}>
+          <Text
+            color={data?.primary_color}
+            fontSize="18px"
+            fontWeight={700}
+            lineHeight="24px"
+          >
             Carrinho
           </Text>
 
@@ -617,10 +627,10 @@ function OrderContext({
           >
             <Grid templateColumns="1fr" gap={4}>
               <Flex justifyContent="space-between" mb={0}>
-                <Text fontSize="sm" fontWeight="600">
+                <Text fontSize="12px" fontWeight={600} color="#6B7280">
                   Itens
                 </Text>
-                <Text fontSize="sm" fontWeight="600">
+                <Text fontSize="12px" fontWeight={600} color="#6B7280">
                   Preço
                 </Text>
               </Flex>
@@ -629,7 +639,12 @@ function OrderContext({
                 <Box key={index} borderBottom="1px solid #CECECE" pb={4} mb={1}>
                   <Grid templateColumns="1fr auto" gap={0}>
                     <Flex alignItems="center">
-                      <Text fontSize="sm" fontWeight="600" color="black">
+                      <Text
+                        fontSize="14px"
+                        fontWeight={600}
+                        color="#1F2937"
+                        lineHeight="20px"
+                      >
                         {item.tipo === "P" || item.tipo === "O" ? (
                           <>
                             {item.quantidade}
@@ -654,7 +669,7 @@ function OrderContext({
                     </Flex>
 
                     <Flex alignItems="center">
-                      <Text fontWeight="600" fontSize="sm" mr="0px">
+                      <Text fontWeight={600} fontSize="14px" mr="0px" color="#1F2937">
                         {item.tipo === "P" || item.tipo === "O"
                           ? data?.regra_valor_montagem === "MEDIA"
                             ? moneyFormat.format(
@@ -690,17 +705,17 @@ function OrderContext({
                         <Stack spacing={1} mb={2}>
                           {item.sabores.map((element, idx) => (
                             <>
-                              <Grid templateColumns="1fr auto" key={idx}>
-                                <Text fontSize="sm" color="gray.600">
+                          <Grid templateColumns="1fr auto" key={idx}>
+                            <Text fontSize="12px" color="gray.600">
                                   1/{item.sabores.length} {element.descricao}
                                 </Text>
-                                <Text fontSize="sm" fontWeight="600">
+                            <Text fontSize="12px" fontWeight={600}>
                                   ***
                                 </Text>
                               </Grid>
                               {element?.observacao ? (
                                 <Text
-                                  fontSize="xs"
+                              fontSize="12px"
                                   display="inline-flex"
                                   alignItems="center"
                                   gap="10px"
@@ -739,9 +754,9 @@ function OrderContext({
                     )}
 
                     {/* Observações */}
-                    {item.observacao_item && (
+                        {item.observacao_item && (
                       <Text
-                        fontSize="xs"
+                            fontSize="12px"
                         fontStyle="italic"
                         color="gray.500"
                         mt={2}
@@ -761,7 +776,7 @@ function OrderContext({
                       pt={2}
                       borderTop="1px dashed #CECECE"
                     >
-                      <Text fontSize="sm" color="gray.700">
+                      <Text fontSize="12px" color="gray.700">
                         {item.quantidade} X{" "}
                         {item.tipo === "P" || item.tipo === "O"
                           ? data?.regra_valor_montagem === "MEDIA"
@@ -778,13 +793,13 @@ function OrderContext({
                             : moneyFormat.format(0)
                           : moneyFormat.format(item.valor)}
                       </Text>
-                      <Text fontSize="sm" color="gray.700">
+                      <Text fontSize="12px" color="gray.700">
                         Adic.{" "}
                         {item.total_adicional
                           ? moneyFormat.format(item.total_adicional)
                           : moneyFormat.format(0)}
                       </Text>
-                      <Text fontSize="sm" fontWeight="600" textAlign="right">
+                      <Text fontSize="14px" fontWeight={700} textAlign="right">
                         {moneyFormat.format(item.valor_total)}
                       </Text>
                     </Grid>
@@ -796,11 +811,11 @@ function OrderContext({
                 onClick={() => router.push(`/lista`)}
                 zIndex={1}
                 variant="outline"
-                fontWeight="600"
+                fontWeight={600}
                 borderColor={data?.primary_color}
                 color={data?.primary_color}
                 size="sm"
-                fontSize="sm"
+                fontSize="14px"
                 w="100%"
                 transition="0.3s"
                 _hover={{
@@ -812,10 +827,10 @@ function OrderContext({
               </Button>
 
               <Flex justifyContent="space-between">
-                <Text fontSize="sm" fontWeight="600">
+                <Text fontSize="14px" fontWeight={700}>
                   Total
                 </Text>
-                <Text fontSize="sm" fontWeight="600">
+                <Text fontSize="14px" fontWeight={700}>
                   {moneyFormat.format(total)}
                 </Text>
               </Flex>
@@ -824,8 +839,8 @@ function OrderContext({
 
           <Text
             color={data?.primary_color}
-            fontSize="20px"
-            fontWeight={600}
+            fontSize="18px"
+            fontWeight={700}
             mb={["16px", "24px"]}
           >
             Tipo de entrega
@@ -1449,24 +1464,32 @@ function OrderContext({
         data={data}
       />
 
-      <Drawer
-        placement="bottom"
-        onClose={() => setOpenTipoEntrega(false)}
-        isOpen={openTipoEntrega}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader
-            position="relative"
-            borderBottomWidth="1px"
+      <Modal isOpen={openTipoEntrega} onClose={() => setOpenTipoEntrega(false)} isCentered>
+        <ModalOverlay />
+        <ModalContent
+          className="mp-rounded-modal"
+          maxW="420px"
+          w="88vw"
+          borderRadius="24px"
+          boxShadow="0 10px 30px rgba(17, 24, 39, 0.12)"
+        >
+          <ModalHeader
             textAlign="center"
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
+            fontWeight="700"
+            fontSize="20px"
+            pb="8px"
           >
             Escolha o tipo de entrega
-          </DrawerHeader>
-          <DrawerBody minH="100px" bg="rgb(243, 245, 247)">
+          </ModalHeader>
+          <ModalBody
+            minH="100px"
+            bg="white"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            px="24px"
+            pb="24px"
+          >
             <RadioGroup
               mt="12px"
               defaultValue={delivery}
@@ -1482,8 +1505,9 @@ function OrderContext({
                 } catch (_) {}
                 setOpenTipoEntrega(false);
               }}
+              w="100%"
             >
-              <Stack gap="15px">
+              <Stack gap="15px" align="center">
                 <Radio
                   size="md"
                   name="delivery"
@@ -1493,7 +1517,9 @@ function OrderContext({
                   fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
                   fontSize="14px"
                 >
-                  Entrega
+                  <Text textAlign="center" w="100%" fontSize="14px">
+                    Entrega
+                  </Text>
                 </Radio>
                 <Radio
                   size="md"
@@ -1503,13 +1529,15 @@ function OrderContext({
                   fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
                   fontSize="14px"
                 >
-                  Retirar do local
+                  <Text textAlign="center" w="100%" fontSize="14px">
+                    Retirar do local
+                  </Text>
                 </Radio>
               </Stack>
             </RadioGroup>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
