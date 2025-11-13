@@ -18,9 +18,11 @@ import {
   Button,
   useDisclosure,
   Flex,
+  Stack,
 } from "@chakra-ui/react";
 import { FiChevronLeft, FiChevronRight, FiTrash2 } from "react-icons/fi";
 import { useRouter } from "next/router";
+import { moneyFormat } from "../../utils/moneyFormat";
 
 const SITE_YELLOW = "#F59E0B"; // cor primária do site
 const SITE_YELLOW_DARK = "#E8A52D";
@@ -152,7 +154,8 @@ export default function CartModal({
                         alt={item.name}
                         w="100%"
                         h="100%"
-                        objectFit="cover"
+                        objectFit="contain"
+                        objectPosition="center"
                       />
                     </Box>
 
@@ -178,18 +181,103 @@ export default function CartModal({
                         {item.name}
                       </Text>
 
-                      <Text
-                        className="price-pill"
-                        fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
-                        fontWeight="600"
-                        fontSize="14px"
-                        lineHeight="20px"
-                        color="#323232"
+                      <Flex
+                        w="100%"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        pr="20px"
                       >
-                        {formatBRL(lineTotal)}
-                      </Text>
+                        <Text
+                          className="price-pill"
+                          fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                          fontWeight="600"
+                          fontSize="14px"
+                          lineHeight="20px"
+                          color="#323232"
+                        >
+                          {formatBRL(lineTotal)}
+                        </Text>
+                        <IconButton
+                          aria-label="Remover"
+                          onClick={() => onRemove?.(item.id)}
+                          w="32px"
+                          h="32px"
+                          minW="32px"
+                          p="8px"
+                          bg="#FFFFFF"
+                          border="1px solid #E5E7EB"
+                          borderRadius="8px"
+                          _hover={{ bg: "#F9FAFB" }}
+                          icon={<Icon as={FiTrash2} boxSize="16px" />}
+                        />
+                      </Flex>
 
-                      {/* Controles: quantidade + remover na mesma linha */}
+                      {/* Sabores */}
+                      {item.sabores && item.sabores.length > 0 && (
+                        <Stack spacing={1} mt="4px" w="100%">
+                          {item.sabores.map((sabor, idx) => (
+                            <Text
+                              key={idx}
+                              fontSize="11px"
+                              color="#6B7280"
+                              fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                              fontWeight={400}
+                              lineHeight="16px"
+                            >
+                              •{" "}
+                              {item.sabores.length > 1
+                                ? `1/${item.sabores.length} `
+                                : ""}
+                              {sabor.descricao}
+                            </Text>
+                          ))}
+                        </Stack>
+                      )}
+
+                      {/* Adicionais */}
+                      {item.adicional && item.adicional.length > 0 && (
+                        <Stack spacing={1} mt="2px" w="100%" pr="8px">
+                          {item.adicional
+                            .filter(
+                              (element) => element.id && !element.id_sabor
+                            )
+                            .map((add, idx) => (
+                              <Flex
+                                key={idx}
+                                justifyContent="flex-start"
+                                alignItems="center"
+                                w="100%"
+                                gap="8px"
+                                maxW="calc(100% - 8px)"
+                              >
+                                <Text
+                                  fontSize="11px"
+                                  color="#6B7280"
+                                  fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                                  fontWeight={400}
+                                  lineHeight="16px"
+                                  flex="1"
+                                  minW="0"
+                                >
+                                  • {add.quantidade}x {add.descricao}
+                                </Text>
+                                <Text
+                                  fontSize="11px"
+                                  color="#6B7280"
+                                  fontFamily="var(--font-poppins), system-ui, -apple-system, sans-serif"
+                                  fontWeight={600}
+                                  lineHeight="16px"
+                                  flexShrink={0}
+                                  ml="auto"
+                                >
+                                  + {moneyFormat.format(add.valor)}
+                                </Text>
+                              </Flex>
+                            ))}
+                        </Stack>
+                      )}
+
+                      {/* Controles: quantidade */}
                       <HStack
                         className="qty"
                         spacing="8px"
@@ -236,20 +324,6 @@ export default function CartModal({
                           _active={{ bg: "#B32017", boxShadow: "none" }}
                           _focusVisible={{ boxShadow: "none" }}
                           icon={<Icon as={FiChevronRight} boxSize="16px" />}
-                        />
-                        <IconButton
-                          aria-label="Remover"
-                          onClick={() => onRemove?.(item.id)}
-                          w="32px"
-                          h="32px"
-                          minW="32px"
-                          p="8px"
-                          bg="#FFFFFF"
-                          border="1px solid #E5E7EB"
-                          borderRadius="8px"
-                          ml="8px"
-                          _hover={{ bg: "#F9FAFB" }}
-                          icon={<Icon as={FiTrash2} boxSize="16px" />}
                         />
                       </HStack>
                     </Flex>
@@ -360,7 +434,6 @@ export default function CartModal({
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-
     </>
   );
 }

@@ -130,6 +130,12 @@ function lista({ data, subdomain }) {
               price: item.valor_total / item.quantidade,
               imageUrl: item.foto_destaque || "/placeholder.png",
               qty: item.quantidade,
+              sabores: item.sabores || [],
+              adicional: item.adicional || [],
+              total_adicional: item.total_adicional || 0,
+              tipo: item.tipo,
+              tamanho: item.tamanho,
+              data: data,
             }))}
             subtotal={cartTotal}
             discounts={0}
